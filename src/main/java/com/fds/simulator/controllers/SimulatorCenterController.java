@@ -1,5 +1,6 @@
 package com.fds.simulator.controllers;
 
+import com.fds.simulator.Simulator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,22 +19,23 @@ import com.fds.simulator.utils.ErrorLogger;
 import com.fds.simulator.utils.FDSHttpRequestHandler;
 import com.fds.simulator.utils.SimulatorSetting;
 
-public class AbfuellanlageLogic {
+public class SimulatorCenterController {
 
-    private final static int delay = 30;
-    private final static double flowrateValve = 0.05;
-    private final static double sollWaterLevel = 6;
-    private final static double initWaterLevel = 2;
-    private final static double sollWaterTemp = 28;
-    private final static double initWaterTemp = 25;
-    private final static double SumWaterLevel = 12;
-    private final static double heatPower = 0.5;
+    private final int delay = 30;
+    private final double flowrateValve = 0.05;
+    private final double sollWaterLevel = 6;
+    private final double initWaterLevel = 2;
+    private final double sollWaterTemp = 28;
+    private final double initWaterTemp = 25;
+    private final double SumWaterLevel = 12;
+    private final double heatPower = 0.5;
 
+    private final Simulator application;
     private final Gui gui;
-    private MenuGui menugui;
-    private WatchListGUI watchListGUI = new WatchListGUI();
-    private AddFaultGUI addFaultGUI = new AddFaultGUI(this);
-    private final FDSHttpRequestHandler http = new FDSHttpRequestHandler(SimulatorSetting.FDSAddress);
+    private final MenuGui menugui;
+    private final WatchListGUI watchListGUI;
+    private final AddFaultGUI addFaultGUI;
+    private final FDSHttpRequestHandler http;
 
     private double WaterTempIn102;
     private int FunctionNo;
@@ -44,14 +46,28 @@ public class AbfuellanlageLogic {
             changeRateTemperature, changeRateWaterLevel, changeRateWaterPressure, changeRateWaterFlow,
             changeRateAirPressure, changeRateAirFlow;
 
-    public AbfuellanlageLogic(Gui gui, MenuGui menugui) throws Exception {
-        this.WaterTempIn102 = initWaterTemp;
-        this.gui = gui;
-        this.gui.setMenuGUI(menugui);
-        this.menugui = menugui;
-        this.menugui.init(this, gui);
+    public SimulatorCenterController(Simulator application) throws Exception {
+        this.application = application;
+
+        http = new FDSHttpRequestHandler(SimulatorSetting.FDSAddress);
+        
+        gui = new Gui(this);
+        gui.init();
         gui.setWaterLevel(initWaterLevel / SumWaterLevel);
+        gui.setHeaterState(false);
         gui.setTemperatureDisplay(initWaterTemp);
+        this.application.add(gui);
+
+        menugui = new MenuGui(this);
+        menugui.init();
+        this.application.add(menugui);
+        
+        addFaultGUI = new AddFaultGUI(this);
+        
+        watchListGUI = new WatchListGUI();
+
+        WaterTempIn102 = initWaterTemp;
+
         ActionListener runningTimerListener = (ActionEvent e) -> {
             try {
                 switch (FunctionNo) {
@@ -162,13 +178,11 @@ public class AbfuellanlageLogic {
         airpumpingTimer = new Timer(delay, airpumpingTimerListener);
     }
 
-    public void setMenuGUI(MenuGui menugui) {
-        this.menugui = menugui;
+    public void run() {
+
     }
-    
-    public MenuGui getMenuGUI() {
-        return this.menugui;
-    }
+
+
 
     public void Start() {
         stopTimer.stop();
@@ -663,22 +677,6 @@ public class AbfuellanlageLogic {
         http.postComponentsValue(sendData);
     }
 
-    public WatchListGUI getWatchListGUI() {
-        return watchListGUI;
-    }
-
-    public void setWatchListGUI(WatchListGUI watchListGUI) {
-        this.watchListGUI = watchListGUI;
-    }
-
-    public AddFaultGUI getAddFaultGUI() {
-        return addFaultGUI;
-    }
-
-    public void setAddFaultGUI(AddFaultGUI addFaultGUI) {
-        this.addFaultGUI = addFaultGUI;
-    }
-
     public void sendFault(String selectedseries, String faultType) {
         try {
             if (!selectedseries.isEmpty()) {
@@ -776,5 +774,29 @@ public class AbfuellanlageLogic {
             default:
                 break;
         }
+    }
+    
+    public MenuGui getMenuGUI() {
+        return this.menugui;
+    }
+
+    public void watchList() {
+        if (watchListGUI.isVisible()) {
+            watchListGUI.setVisible(false);
+        } else {
+            watchListGUI.setVisible(true);
+        }
+    }
+
+    public void addFaultGUI() {
+        if (addFaultGUI.isVisible()) {
+            addFaultGUI.setVisible(false);
+        } else {
+            addFaultGUI.setVisible(true);
+        }
+    }
+
+    public boolean checkConnection() throws Exception {
+        return http.connectionStatus().getString("status").equals("running");
     }
 }

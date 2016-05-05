@@ -11,19 +11,13 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.border.LineBorder;
 
-import com.fds.simulator.controllers.AbfuellanlageLogic;
-import com.fds.simulator.utils.FDSHttpRequestHandler;
-import com.fds.simulator.utils.SimulatorSetting;
+import com.fds.simulator.controllers.SimulatorCenterController;
 
 public class MenuGui extends JPanel {
 
-    private static final long serialVersionUID = 1L;
-    private final JSlider proportionalValveSlider;
-    Gui gui;
-    AbfuellanlageLogic logic;
-    WatchListGUI watchListGUI;
-    AddFaultGUI addFaultGUI;
-    private final FDSHttpRequestHandler http = new FDSHttpRequestHandler(SimulatorSetting.FDSAddress);
+    private JSlider proportionalValveSlider;
+
+    private final SimulatorCenterController simulatorCenterController;
 
     JLabel currentWaterLevel1, currentWaterLevel2, currentWaterTemp, abfStatus, connectionStatus;
     JButton StartButton, StopButton, FillingButton, HeatingButton, PumpingButton, AirPumpingButton, WatchListButton, AddFaultButton, RepairButton, ExecuteButton;
@@ -31,9 +25,14 @@ public class MenuGui extends JPanel {
     /**
      * Create the panel.
      *
+     * @param simulatorCenterController
      * @throws Exception
      */
-    public MenuGui() throws Exception {
+    public MenuGui(SimulatorCenterController simulatorCenterController) throws Exception {
+        this.simulatorCenterController = simulatorCenterController;
+    }
+
+    public void init() throws Exception {
         setBorder(new LineBorder(new Color(128, 128, 128)));
         setBounds(798, 0, 302, 800);
         setLayout(null);
@@ -125,22 +124,18 @@ public class MenuGui extends JPanel {
 
         FillingButton = new JButton("Filling");
         FillingButton.setBounds(16, 300, 128, 37);
-
         add(FillingButton);
 
         HeatingButton = new JButton("Heating");
         HeatingButton.setBounds(162, 300, 128, 37);
-
         add(HeatingButton);
 
         PumpingButton = new JButton("Pumping");
         PumpingButton.setBounds(16, 350, 128, 37);
-
         add(PumpingButton);
 
         AirPumpingButton = new JButton("Air Pumping");
         AirPumpingButton.setBounds(162, 350, 128, 37);
-
         add(AirPumpingButton);
 
         JLabel controllerlabel = new JLabel("Controller");
@@ -152,22 +147,14 @@ public class MenuGui extends JPanel {
         WatchListButton = new JButton("Watch List");
         WatchListButton.setBounds(16, 450, 128, 37);
         WatchListButton.addActionListener((ActionEvent e) -> {
-            if (watchListGUI.isVisible()) {
-                watchListGUI.setVisible(false);
-            } else {
-                watchListGUI.setVisible(true);
-            }
+            simulatorCenterController.watchList();
         });
         add(WatchListButton);
 
         AddFaultButton = new JButton("Add Fault");
         AddFaultButton.setBounds(162, 450, 128, 37);
         AddFaultButton.addActionListener((ActionEvent e) -> {
-            if (addFaultGUI.isVisible()) {
-                addFaultGUI.setVisible(false);
-            } else {
-                addFaultGUI.setVisible(true);
-            }
+            simulatorCenterController.addFaultGUI();
         });
         add(AddFaultButton);
 
@@ -178,7 +165,6 @@ public class MenuGui extends JPanel {
         ExecuteButton = new JButton("Set Strategy");
         ExecuteButton.setBounds(162, 500, 128, 37);
         ExecuteButton.setEnabled(false);
-        
         add(ExecuteButton);
 
         JLabel statuslabel = new JLabel("Status");
@@ -206,11 +192,36 @@ public class MenuGui extends JPanel {
         connectionStatus.setBounds(200, 610, 100, 20);
         connectionStatus.setFont(new Font("Ubuntu", 0, 14));
         add(connectionStatus);
+
+        this.RepairButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.Repair();
+        });
+        this.StartButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.Start();
+        });
+        this.StopButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.Stop();
+        });
+        this.AirPumpingButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.AirPumpingFunction();
+        });
+        this.FillingButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.FillingFunction();
+        });
+        this.PumpingButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.PumpingFunction();
+        });
+        this.HeatingButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.HeatingFunction();
+        });
+        this.ExecuteButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.executeStrategy();
+        });
         checkConnection();
     }
 
     private void checkConnection() throws Exception {
-        if (http.connectionStatus().getString("status").equals("running")) {
+        if (simulatorCenterController.checkConnection()){
             setConnectionStatus("connected");
         } else {
             setConnectionStatus("disconnected");
@@ -302,36 +313,5 @@ public class MenuGui extends JPanel {
 
     public void setConnectionStatus(String status) {
         connectionStatus.setText(status);
-    }
-
-    public void init(AbfuellanlageLogic logic, Gui gui) {
-        this.gui = gui;
-        this.logic = logic;
-        this.watchListGUI = logic.getWatchListGUI();
-        this.addFaultGUI = logic.getAddFaultGUI();
-        this.RepairButton.addActionListener((ActionEvent e) -> {
-            logic.Repair();
-        });
-        this.StartButton.addActionListener((ActionEvent e) -> {
-            logic.Start();
-        });
-        this.StopButton.addActionListener((ActionEvent e) -> {
-            logic.Stop();
-        });
-        this.AirPumpingButton.addActionListener((ActionEvent e) -> {
-            logic.AirPumpingFunction();
-        });
-        this.FillingButton.addActionListener((ActionEvent e) -> {
-            logic.FillingFunction();
-        });
-        this.PumpingButton.addActionListener((ActionEvent e) -> {
-            logic.PumpingFunction();
-        });
-        this.HeatingButton.addActionListener((ActionEvent e) -> {
-            logic.HeatingFunction();
-        });
-        this.ExecuteButton.addActionListener((ActionEvent e) -> {
-            logic.executeStrategy();
-        });
     }
 }

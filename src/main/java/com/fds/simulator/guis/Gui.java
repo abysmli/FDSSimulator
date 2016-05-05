@@ -1,5 +1,6 @@
 package com.fds.simulator.guis;
 
+import com.fds.simulator.controllers.SimulatorCenterController;
 import java.awt.Color;
 
 import javax.swing.JLabel;
@@ -30,8 +31,7 @@ import com.fds.simulator.guis.components.Valve;
 public class Gui extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    private MenuGui menuGui;
-
+    
     private final SimulationComponent heater;
     private final SimulationComponent temperatureDisplay;
     private final SimulationComponent tank1;
@@ -55,37 +55,12 @@ public class Gui extends JPanel {
     private final SimulationComponent airpressuremeter;
 
     private final JLabel processLabel;
-
-    public void init() {
-        setBorder(new LineBorder(new Color(128, 128, 128)));
-        setBounds(0, 0, 798, 800);
-        setBackground(new Color(204, 229, 255));
-        setLayout(null);
-        add(this.pressuremeter);
-        add(this.heater);
-        add(this.temperatureDisplay);
-        add(this.tank1);
-        add(this.tank2);
-        add(this.manualvalve);
-        add(this.valve);
-        add(this.ball);
-        add(this.manualvalvelower);
-        add(this.manualvalvelower2);
-        add(this.airvalve);
-        add(this.pump);
-        add(this.flowmeter);
-        add(this.airflowmeter);
-        add(this.airpressuremeter);
-        add(this.valve);
-        add(this.proportionalValve);
-        add(this.upperPipe);
-        add(this.lowerPipe);
-        add(this.processLabel);
-        add(this.airpump);
-        add(this.airPipe);
-    }
     
-    public Gui() {
+    private final SimulatorCenterController simulatorCenterController;
+
+    public Gui(SimulatorCenterController simulatorCenterController) {
+        this.simulatorCenterController =  simulatorCenterController;
+        
         this.pressuremeter = new Pressuremeter(130, 550, 60, 100, 0.07, "Pressur");
         
         this.heater = new Heater(610, 490, 30, 30, 0.07);
@@ -131,30 +106,54 @@ public class Gui extends JPanel {
         
         this.airPipe = new AirPipe((Valve) this.valve, (AirPump) this.airpump);
     }
-
-    // setter	
-    public void setMenuGUI(MenuGui menuGui) {
-        this.menuGui = menuGui;
+    
+    public void init() {
+        setBorder(new LineBorder(new Color(128, 128, 128)));
+        setBounds(0, 0, 798, 800);
+        setBackground(new Color(204, 229, 255));
+        setLayout(null);
+        add(this.pressuremeter);
+        add(this.heater);
+        add(this.temperatureDisplay);
+        add(this.tank1);
+        add(this.tank2);
+        add(this.manualvalve);
+        add(this.valve);
+        add(this.ball);
+        add(this.manualvalvelower);
+        add(this.manualvalvelower2);
+        add(this.airvalve);
+        add(this.pump);
+        add(this.flowmeter);
+        add(this.airflowmeter);
+        add(this.airpressuremeter);
+        add(this.valve);
+        add(this.proportionalValve);
+        add(this.upperPipe);
+        add(this.lowerPipe);
+        add(this.processLabel);
+        add(this.airpump);
+        add(this.airPipe);
     }
 
     public void setSliderValue(double value) {
-        this.menuGui.setSliderValue(value);
+        this.simulatorCenterController.getMenuGUI().setSliderValue(value);
     }
 
     public double getSliderValue() {
-        return this.menuGui.getSliderValue();
+        return this.simulatorCenterController.getMenuGUI().getSliderValue();
     }
 
     public void setShowWaterLevel1(double level) {
-        this.menuGui.setWaterLevel1(level);
+        this.simulatorCenterController.getMenuGUI().setWaterLevel1(level);
     }
 
     public void setShowWaterLevel2(double level) {
-        this.menuGui.setWaterLevel2(level);
+        this.simulatorCenterController.getMenuGUI().setWaterLevel2(level);
     }
 
     public void setShowWaterTemp(double temp) {
-        this.menuGui.setWaterTemp(temp);
+        this.simulatorCenterController.getMenuGUI().setWaterTemp(temp);
     }
 
     public void setProcessLabelText(String text) {
@@ -176,12 +175,10 @@ public class Gui extends JPanel {
         ((Valve) this.valve).setValveState(state);
         ((UpperPipe) this.upperPipe).setLastPipeSectionBlue(state);
         ((Tank) this.tank2).setBlueStripe(state);
-        // menuGui.setValveButtonState(state);
     }
 
     public void setManualValveState(boolean state) {
         ((ManualValve) this.manualvalve).setValveState(state);
-        // menuGui.setValveButtonState(state);
     }
 
     public void setUpperTankLevel(double upperTankLevel) {
