@@ -57,6 +57,7 @@ public class Simulator extends JPanel implements Runnable {
         JFrame jf = new JFrame();
         Container c = jf.getContentPane();
         c.add(simulator);
+        jf.setTitle("FDS Simulator");
         jf.setBounds(0, 0, 1100, 800);
         jf.setSize(1100, 800);
         jf.setResizable(false);
