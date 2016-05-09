@@ -5,11 +5,11 @@ import javax.swing.JComponent;
 public abstract class SimulationComponent extends JComponent
 {
 	private static final long serialVersionUID = 1L;
-	private int xCoordinate;
-	private int yCoordinate;
-	private int widthComponent;
-	private int heightComponent;
-	private double pipeRadiusPercentage; // Radius of the pipe in percentage based on the tank's width
+	private final int xCoordinate;
+	private final int yCoordinate;
+	private final int widthComponent;
+	private final int heightComponent;
+	private final double pipeRadiusPercentage; // Radius of the pipe in percentage based on the tank's width
 
 	public SimulationComponent(int xCoordinate, int yCoordinate, int widthComponent, int heightComponent, double pipeWidthPorcentage) 
 	{
