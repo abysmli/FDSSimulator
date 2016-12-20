@@ -6,14 +6,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
-public class Tank extends SimulationComponent {
+public class Tank101 extends SimulationComponent {
 
     private static final long serialVersionUID = 1L;
     private double level;
     private String name;
     private boolean stripe;
+    private boolean stripeReplace;
 
-    public Tank(int x, int y, int width, int height, double pipeWidthPorcentage, String name) {
+    public Tank101(int x, int y, int width, int height, double pipeWidthPorcentage, String name) {
         super(x, y, width, height, pipeWidthPorcentage);
         this.name = name;
         this.level = 0.5;
@@ -26,7 +27,8 @@ public class Tank extends SimulationComponent {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         super.paintComponent(g);
         g.drawLine(0, (int) (this.getHeightComponent() / 5.0), 0, (int) (this.getHeightComponent() / 3 - this.getWidthComponent() * this.getPipeRadiusPercentage()));
-        g.drawLine(0, (int) (this.getHeightComponent() / 3.0 + this.getWidthComponent() * this.getPipeRadiusPercentage()), 0, getHeightComponent());
+        g.drawLine(0, (int) (this.getHeightComponent() / 3.0 + this.getWidthComponent() * this.getPipeRadiusPercentage()), 0, (int) (this.getHeightComponent() / 3 - this.getWidthComponent() * this.getPipeRadiusPercentage()) + 100);
+        g.drawLine(0, (int) (this.getHeightComponent() / 3.0 + this.getWidthComponent() * this.getPipeRadiusPercentage()) + 100, 0, getHeightComponent());
         g.drawLine(0, this.getHeightComponent(), (int) (this.getWidthComponent() / 2.0 - this.getWidthComponent() * this.getPipeRadiusPercentage()), this.getHeightComponent());
         g.drawLine((int) (this.getWidthComponent() / 2.0 + this.getWidthComponent() * this.getPipeRadiusPercentage()), this.getHeightComponent(), this.getWidthComponent(), this.getHeightComponent());
         g.drawLine(this.getWidthComponent(), this.getHeightComponent(), this.getWidthComponent(), (int) (this.getHeightComponent() / 5.0));
@@ -41,6 +43,10 @@ public class Tank extends SimulationComponent {
 
         if (stripe) {
             g.fillRect(1, this.getInputY() - this.getPipeRadius() - this.getYCoordinate(), 5, this.getHeightComponent() - this.getInputY() + this.getPipeRadius() + this.getYCoordinate());
+        }
+        
+        if (stripeReplace) {
+            g.fillRect(1, this.getInputY() - this.getPipeRadius() - this.getYCoordinate() + 100, 5, this.getHeightComponent() - this.getInputY() + this.getPipeRadius() + this.getYCoordinate() - 100);
         }
 
         // label
@@ -90,6 +96,11 @@ public class Tank extends SimulationComponent {
 
     public void setBlueStripe(boolean stripe) {
         this.stripe = stripe;
+        repaint();
+    }
+
+    public void setBlueRepalceStripe(boolean stripe) {
+        this.stripeReplace = stripe;
         repaint();
     }
 }

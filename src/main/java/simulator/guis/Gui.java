@@ -23,12 +23,15 @@ import simulator.guis.components.Pressuremeter;
 import simulator.guis.components.ProportionalValve;
 import simulator.guis.components.Pump;
 import simulator.guis.components.SimulationComponent;
-import simulator.guis.components.Tank;
+import simulator.guis.components.Tank101;
 import simulator.guis.components.TemperatureDisplay;
 import simulator.guis.components.UpperPipe;
 import simulator.guis.components.Valve;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import simulator.guis.components.Tank102;
+import simulator.guis.components.UpperReplacePipe;
+import simulator.guis.components.Valve113;
 
 public class Gui extends JPanel {
 
@@ -36,29 +39,34 @@ public class Gui extends JPanel {
 
     private final SimulationComponent heater;
     private final SimulationComponent temperatureDisplay;
-    private final SimulationComponent tank1;
-    private final SimulationComponent tank2;
+    private final SimulationComponent temperatureDisplay2;
+    private final SimulationComponent tank102;
+    private final SimulationComponent tank101;
     private final SimulationComponent pump;
-    private final SimulationComponent valve;
+    private final SimulationComponent valve102;
     private final SimulationComponent flowmeter;
     private final SimulationComponent proportionalValve;
     private final SimulationComponent upperPipe;
     private final SimulationComponent lowerPipe;
 
-    private final SimulationComponent manualvalve;
+    private final SimulationComponent valve112;
+    private final SimulationComponent valve113;
     private final SimulationComponent pressuremeter;
-    private final SimulationComponent manualvalvelower;
-    private final SimulationComponent manualvalvelower2;
+    private final SimulationComponent valve104;
+    private final SimulationComponent valve109;
     private final SimulationComponent airpump;
     private final SimulationComponent airPipe;
     private final SimulationComponent ball;
     private final SimulationComponent airvalve;
     private final SimulationComponent airflowmeter;
     private final SimulationComponent airpressuremeter;
-
+    private final SimulationComponent upperReplacePipe;
+    
     private final JLabel processLabel;
 
     private final SimulatorCenterController simulatorCenterController;
+    
+    
 
     public Gui(SimulatorCenterController simulatorCenterController) {
         this.simulatorCenterController = simulatorCenterController;
@@ -69,19 +77,19 @@ public class Gui extends JPanel {
         this.heater = new Heater(610, 490, 30, 30, 0.07);
         this.heater.setToolTipText("Heizung, Actor, E104, ID: 2");
 
-        this.tank1 = new Tank(100, 50, 150, 250, 0.07, "Tank 102");
-        this.tank1.setToolTipText("Tank 102, Tank, ID: 26");
+        this.tank102 = new Tank102(100, 50, 150, 250, 0.07, "Tank 102");
+        this.tank102.setToolTipText("Tank 102, Tank, ID: 26");
 
-        this.tank2 = new Tank(600, 280, 150, 250, 0.07, "Tank 101");
-        this.tank2.setToolTipText("Tank 101, Tank, ID: 4");
+        this.tank101 = new Tank101(600, 280, 150, 250, 0.07, "Tank 101");
+        this.tank101.setToolTipText("Tank 101, Tank, ID: 4");
 
-        this.valve = new Valve(448, 342, 60, 200, 0.07, ((Tank) tank1).getPipeWidth(), "Valve 102");
-        this.valve.setToolTipText("Kugelhahn, Actor, V102, ID: 5");
+        this.valve102 = new Valve(448, 342, 60, 80, 0.07, ((Tank102) tank102).getPipeWidth(), "Valve 102");
+        this.valve102.setToolTipText("Kugelhahn, Actor, V102, ID: 5");
 
         this.ball = new Ball(463, 311, 30, 30, 0.07, "Ball");
         this.ball.setToolTipText("Kugelhahn, Schalter, S115/S116, ID: 6/7");
 
-        this.proportionalValve = new ProportionalValve(270, 551, 60, 120, 0.07, ((Tank) tank1).getPipeWidth(),
+        this.proportionalValve = new ProportionalValve(270, 551, 60, 120, 0.07, ((Tank102) tank102).getPipeWidth(),
                 "Prop. Valve");
         this.proportionalValve.setToolTipText("Proportionalwegeventil, Actor, M106, ID: 11");
 
@@ -94,10 +102,10 @@ public class Gui extends JPanel {
         this.flowmeter = new Flowmeter(380, 550, 60, 100, 0.07, "Flowmeter");
         this.flowmeter.setToolTipText("Wasserdurchflusssensor, Sensor, B102, ID:15");
 
-        this.manualvalvelower2 = new ManualValveLower2(600, 562, 60, 120, 0.07, ((Tank) tank1).getPipeWidth(), "Valve 109");
-        this.manualvalvelower2.setToolTipText("Ventil 109, Ventil, V109, ID: 19");
+        this.valve109 = new ManualValveLower2(600, 562, 60, 120, 0.07, ((Tank102) tank102).getPipeWidth(), "Valve 109");
+        this.valve109.setToolTipText("Ventil 109, Ventil, V109, ID: 19");
 
-        this.airvalve = new AirValve(560, 110, 60, 120, 0.07, ((Valve) valve).getPipeWidth(), "Air Valve");
+        this.airvalve = new AirValve(560, 110, 60, 120, 0.07, ((Valve) valve102).getPipeWidth(), "Air Valve");
         this.airvalve.setToolTipText("Magnet Ventil, Actor, VAir, ID: 20");
 
         this.airflowmeter = new AirFlowMeter(348, 150, 200, 100, 0.07, "Air Flowmeter");
@@ -109,18 +117,25 @@ public class Gui extends JPanel {
         this.airpump = new AirPump(650, 100, 60, 100, 0.07, "Air Pump");
         this.airpump.setToolTipText("Kompressor,Actor, KOMP, ID: 23");
 
-        this.manualvalvelower = new ManualValveLower(60, 562, 60, 120, 0.07, ((Tank) tank1).getPipeWidth(), "Valve 104");
-        this.manualvalvelower.setToolTipText("Ventil, V104, ID: 24");
+        this.valve104 = new ManualValveLower(60, 562, 60, 120, 0.07, ((Tank102) tank102).getPipeWidth(), "Valve 104");
+        this.valve104.setToolTipText("Ventil, V104, ID: 24");
 
-        this.manualvalve = new ManualValve(300, 342, 60, 100, 0.07, ((Tank) tank1).getPipeWidth(), "Valve 112");
-        this.manualvalve.setToolTipText("Manual Valve 112, Ventil, V112, ID: 25");
+        this.valve112 = new ManualValve(300, 342, 60, 100, 0.07, ((Tank102) tank102).getPipeWidth(), "Valve 112");
+        this.valve112.setToolTipText("Manual Valve 112, Ventil, V112, ID: 25");
+        
+        this.valve113 = new Valve113(448, 442, 60, 100, 0.07, ((Tank102) tank102).getPipeWidth(), "Valve 113");
+        this.valve113.setToolTipText("Digital Valve 113, Ventil, V113, ID: 26");
 
         this.temperatureDisplay = new TemperatureDisplay(680, 490, 60, 30, 0.07);
         this.temperatureDisplay.setToolTipText("Temperature Display");
-
-        this.upperPipe = new UpperPipe((Tank) this.tank1, (Tank) this.tank2, (Valve) this.valve);
-        this.lowerPipe = new LowerPipe((Tank) this.tank1, (Tank) this.tank2);
-        this.airPipe = new AirPipe((Valve) this.valve, (AirPump) this.airpump);
+        
+        this.temperatureDisplay2 = new TemperatureDisplay(680, 340, 60, 30, 0.07);
+        this.temperatureDisplay2.setToolTipText("Temperature Display 2");
+        
+        this.upperPipe = new UpperPipe((Tank102) this.tank102, (Tank101) this.tank101, (Valve) this.valve102);
+        this.upperReplacePipe = new UpperReplacePipe((Tank102) this.tank102, (Tank101) this.tank101, (Valve) this.valve102);
+        this.lowerPipe = new LowerPipe((Tank102) this.tank102, (Tank101) this.tank101);
+        this.airPipe = new AirPipe((Valve) this.valve102, (AirPump) this.airpump);
     }
 
     public void init() {
@@ -154,42 +169,64 @@ public class Gui extends JPanel {
             }
         });
         add(this.temperatureDisplay);
+        
+        this.temperatureDisplay2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("E105");
+            }
+        });
+        add(this.temperatureDisplay2);
 
-        this.tank1.addMouseListener(new MouseAdapter() {
+        this.tank102.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 simulatorCenterController.openAddFaultGUIBySeries("Tank102");
             }
         });
-        add(this.tank1);
+        add(this.tank102);
 
-        this.tank2.addMouseListener(new MouseAdapter() {
+        this.tank101.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 simulatorCenterController.openAddFaultGUIBySeries("Tank101");
             }
         });
-        add(this.tank2);
+        add(this.tank101);
 
-        this.manualvalve.addMouseListener(new MouseAdapter() {
+        // V112
+        this.valve112.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 simulatorCenterController.openAddFaultGUIBySeries("V112");
             }
         });
-        add(this.manualvalve);
-
-        this.valve.addMouseListener(new MouseAdapter() {
+        add(this.valve112);
+        
+        // V113
+        this.valve113.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("V113");
+            }
+        });
+        add(this.valve113);
+        setValveStateV113(false);
+        
+        // Valve 102
+        this.valve102.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 simulatorCenterController.openAddFaultGUIBySeries("V102");
             }
         });
-        add(this.valve);
+        add(this.valve102);
 
         this.ball.addMouseListener(new MouseAdapter() {
             @Override
@@ -200,23 +237,25 @@ public class Gui extends JPanel {
         });
         add(this.ball);
 
-        this.manualvalvelower.addMouseListener(new MouseAdapter() {
+        // V104
+        this.valve104.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 simulatorCenterController.openAddFaultGUIBySeries("V104");
             }
         });
-        add(this.manualvalvelower);
+        add(this.valve104);
 
-        this.manualvalvelower2.addMouseListener(new MouseAdapter() {
+        // V109
+        this.valve109.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 simulatorCenterController.openAddFaultGUIBySeries("V109");
             }
         });
-        add(this.manualvalvelower2);
+        add(this.valve109);
 
         this.airvalve.addMouseListener(new MouseAdapter() {
             @Override
@@ -273,6 +312,7 @@ public class Gui extends JPanel {
         add(this.proportionalValve);
 
         add(this.upperPipe);
+        add(this.upperReplacePipe);
         add(this.lowerPipe);
         add(this.processLabel);
 
@@ -314,7 +354,7 @@ public class Gui extends JPanel {
     public void setPumpState(boolean state) {
         ((Pump) this.pump).setPumpState(state);
         ((LowerPipe) this.lowerPipe).setLastPipeSectionBlue(state);
-        ((Tank) this.tank1).setBlueStripe(state);
+        ((Tank102) this.tank102).setBlueStripe(state);
         // menuGui.setPumpButtonState(state);
     }
 
@@ -323,33 +363,39 @@ public class Gui extends JPanel {
     }
 
     public void setValveStateID5(boolean state) {
-        ((Valve) this.valve).setValveState(state);
+        ((Valve) this.valve102).setValveState(state);
+    }
+    
+    public void setValveStateV113(boolean state) {
+        ((Valve113) this.valve113).setValveState(state);
+        ((UpperReplacePipe) this.upperReplacePipe).setLastPipeSectionBlue(state);
+        ((Tank101) this.tank101).setBlueRepalceStripe(state);
     }
 
     public void setValveState(boolean state) {
-        ((Valve) this.valve).setValveState(state);
+        ((Valve) this.valve102).setValveState(state);
         ((UpperPipe) this.upperPipe).setLastPipeSectionBlue(state);
-        ((Tank) this.tank2).setBlueStripe(state);
+        ((Tank101) this.tank101).setBlueStripe(state);
     }
 
     public void setManualValveState(boolean state) {
-        ((ManualValve) this.manualvalve).setValveState(state);
+        ((ManualValve) this.valve112).setValveState(state);
     }
 
     public void setManualValveLowerState(boolean state) {
-        ((ManualValveLower) this.manualvalvelower).setValveState(state);
+        ((ManualValveLower) this.valve104).setValveState(state);
     }
 
     public void setManualValveLower2State(boolean state) {
-        ((ManualValveLower2) this.manualvalvelower2).setValveState(state);
+        ((ManualValveLower2) this.valve109).setValveState(state);
     }
 
     public void setUpperTankLevel(double upperTankLevel) {
-        ((Tank) this.tank1).setTankLevel(upperTankLevel);
+        ((Tank102) this.tank102).setTankLevel(upperTankLevel);
     }
 
     public void setLowerTankLevel(double lowerTankLevel) {
-        ((Tank) this.tank2).setTankLevel(lowerTankLevel);
+        ((Tank101) this.tank101).setTankLevel(lowerTankLevel);
     }
 
     public void setWaterLevel(double waterLevel) {
@@ -371,7 +417,10 @@ public class Gui extends JPanel {
 
     public void setTemperatureDisplay(double temperature) {
         ((TemperatureDisplay) this.temperatureDisplay).setTemperature(temperature);
-
+    }
+    
+    public void setTemperatureDisplay2(double temperature) {
+        ((TemperatureDisplay) this.temperatureDisplay2).setTemperature(temperature);
     }
 
     public void setPressureRate(double pressurerate) {
@@ -423,23 +472,31 @@ public class Gui extends JPanel {
     }
 
     public double getWaterLevel() {
-        return ((Tank) this.tank2).getTankLevel();
+        return ((Tank101) this.tank101).getTankLevel();
     }
 
     public double getTankLevel() {
-        return ((Tank) this.tank1).getTankLevel();
+        return ((Tank102) this.tank102).getTankLevel();
     }
 
     public boolean getValveState() {
-        return ((Valve) this.valve).getValveState();
+        return ((Valve) this.valve102).getValveState();
     }
 
     public boolean getManualValveState() {
-        return ((ManualValve) this.manualvalve).getValveState();
+        return ((ManualValve) this.valve112).getValveState();
+    }
+    
+    public boolean getValveStateV113() {
+        return ((Valve113) this.valve113).getValveState();
     }
 
     public double getTemperature() {
         return ((TemperatureDisplay) this.temperatureDisplay).getTemperature();
+    }
+    
+    public double getTemperature2() {
+        return ((TemperatureDisplay) this.temperatureDisplay2).getTemperature();
     }
 
     public boolean getPumpState() {

@@ -205,35 +205,39 @@ public class TaskController extends FunctionController {
     }
 
     public void startSimulationAllProcess() {
-        stop();
-        TaskNo = 1;
-        ProcessNo = 1;
-        starttime = System.currentTimeMillis();
-        SimulationAllProcessTaskTimer.start();
+        super.simulatorCenterController.tasksList.addTasks("Heat 35°C Water");
+//        stop();
+//        TaskNo = 1;
+//        ProcessNo = 1;
+//        starttime = System.currentTimeMillis();
+//        SimulationAllProcessTaskTimer.start();
     }
 
     public void startSimulationWithHeat() {
-        stop();
-        TaskNo = 2;
-        ProcessNo = 1;
-        starttime = System.currentTimeMillis();
-        SimulationWithHeatTaskTimer.start();
+        super.simulatorCenterController.tasksList.addTasks("Heat 55°C Water");
+//        stop();
+//        TaskNo = 2;
+//        ProcessNo = 1;
+//        starttime = System.currentTimeMillis();
+//        SimulationWithHeatTaskTimer.start();
     }
 
     public void startSimulationWithAirPump() {
-        stop();
-        TaskNo = 3;
-        ProcessNo = 1;
-        starttime = System.currentTimeMillis();
-        SimulationWithAirPumpTaskTimer.start();
+        super.simulatorCenterController.tasksList.addTasks("Heat 75°C Water");
+//        stop();
+//        TaskNo = 3;
+//        ProcessNo = 1;
+//        starttime = System.currentTimeMillis();
+//        SimulationWithAirPumpTaskTimer.start();
     }
 
     public void startClean() {
-        stop();
-        TaskNo = 4;
-        ProcessNo = 1;
-        starttime = System.currentTimeMillis();
-        CleanTaskTimer.start();
+        super.simulatorCenterController.tasksList.addTasks("Clean Pipe");
+//        stop();
+//        TaskNo = 4;
+//        ProcessNo = 1;
+//        starttime = System.currentTimeMillis();
+//        CleanTaskTimer.start();
     }
 
     @Override

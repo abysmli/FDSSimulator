@@ -12,7 +12,7 @@ import javax.swing.Timer;
 public class LowerPipe extends SimulationComponent {
 
     private static final long serialVersionUID = 1L;
-    private final Tank upperTank;
+    private final Tank102 upperTank;
     private boolean lastPipeSectionBlue;
     private final Timer timer;
     private final int delay;
@@ -20,7 +20,7 @@ public class LowerPipe extends SimulationComponent {
     private final int barWidth;
     private int barDisplacement;
 
-    public LowerPipe(Tank upperTank, Tank lowerTank) {
+    public LowerPipe(Tank102 upperTank, Tank101 lowerTank) {
         super(upperTank.getInputX() - 3 * upperTank.getPipeWidth(), upperTank.getInputY() - upperTank.getPipeRadius(),
                 lowerTank.getOutputX() + lowerTank.getPipeRadius() - (upperTank.getInputX() - 3 * upperTank.getPipeWidth()),
                 lowerTank.getOutputY() + 3 * upperTank.getPipeWidth() - (upperTank.getInputY() - upperTank.getPipeRadius()),

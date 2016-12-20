@@ -17,6 +17,7 @@ import simulator.utils.FDSHttpRequestHandler;
 import simulator.utils.SimulatorSetting;
 import fds.FDMGUI;
 import fds.controllers.FDMController;
+import simulator.guis.TasksList;
 
 public class SimulatorCenterController {
 
@@ -24,6 +25,7 @@ public class SimulatorCenterController {
     private final Simulator application;
     private final Gui gui;
     private final MenuGui menugui;
+    public final TasksList tasksList;
     private final WatchListGUI watchListGUI;
     private final AddFaultGUI addFaultGUI;
     private final FDSHttpRequestHandler http;
@@ -39,6 +41,10 @@ public class SimulatorCenterController {
         gui = new Gui(this);
         gui.init();
         this.application.add(gui);
+        
+        tasksList = new TasksList(this);
+        tasksList.init();
+        this.application.add(tasksList);
 
         menugui = new MenuGui(this);
         menugui.init();
@@ -51,28 +57,33 @@ public class SimulatorCenterController {
         FDMGui.setFDMController(FDMController);
     }
 
-    public void SimulationAllProcessTask() {
+    public void HeatWater35() {
         taskController.startSimulationAllProcess();
-        buttonStatusChange(true);
+//        buttonStatusChange(true);
     }
 
-    public void SimulationWithAirPumpTask() {
+    public void HeatWater65() {
         taskController.startSimulationWithAirPump();
-        buttonStatusChange(true);
+//        buttonStatusChange(true);
     }
 
-    public void SimulationWithHeatTask() {
+    public void HeatWater55() {
         taskController.startSimulationWithHeat();
-        buttonStatusChange(true);
+//        buttonStatusChange(true);
     }
 
-    public void CleanTask() {
+    public void Clean() {
         taskController.startClean();
-        buttonStatusChange(true);
+//        buttonStatusChange(true);
     }
 
     public void FillingProcess() {
         taskController.startFillLowerTankProcess();
+        buttonStatusChange(true);
+    }
+    
+    public void FillingReplaceProcess() {
+        taskController.startFillReplaceLowerTankProcess();
         buttonStatusChange(true);
     }
 
@@ -270,6 +281,7 @@ public class SimulatorCenterController {
         menugui.setSimulationAirPumpTaskButtonEnable(!flag);
         menugui.setSimulationCleanTaskButtonEnable(!flag);
         menugui.setFillingButtonEnable(!flag);
+        menugui.setFillingReplaceButtonEnable(!flag);
         menugui.setHeatingButtonEnable(!flag);
         menugui.setPumpingButtonEnable(!flag);
         menugui.setAirPumpingButtonEnable(!flag);

@@ -38,7 +38,7 @@ public class FunctionController {
             changeRateTemperature, changeRateWaterLevel, changeRateWaterPressure, changeRateWaterFlow,
             changeRateAirPressure, changeRateAirFlow;
 
-    private final Timer stopTimer, fillingTimer, heatingTimer, pumpingTimer, airpumpingTimer;
+    private final Timer stopTimer, fillingTimer, fillingReplaceTimer, heatingTimer, pumpingTimer, airpumpingTimer;
     protected long starttime;
 
     protected final Gui gui;
@@ -55,10 +55,12 @@ public class FunctionController {
         gui.setWaterLevel(initWaterLevel / SumWaterLevel);
         gui.setHeaterState(false);
         gui.setTemperatureDisplay(initWaterTemp);
-
+        gui.setTemperatureDisplay2(initWaterTemp);
+        
         ActionListener stopTimerListener = (ActionEvent e) -> {
             if (gui.getTemperature() > 15.0) {
                 gui.setTemperatureDisplay(gui.getTemperature() - 0.1 * delay / 1000);
+                gui.setTemperatureDisplay2(gui.getTemperature() - 0.1 * delay / 1000);
             }
             if (gui.getAirPressure() > 0) {
                 gui.setAirPressure(gui.getAirPressure() - 0.1 * delay / 3000);
@@ -67,7 +69,6 @@ public class FunctionController {
         stopTimer = new Timer(delay, stopTimerListener);
 
         ActionListener fillingTimerListener = (ActionEvent e) -> {
-
             if (gui.getWaterLevel() >= sollWaterLevel / SumWaterLevel) {
                 simulatorCenterController.Stop();
             } else {
@@ -79,6 +80,19 @@ public class FunctionController {
             }
         };
         fillingTimer = new Timer(delay, fillingTimerListener);
+        
+        ActionListener fillingReplaceTimerListener = (ActionEvent e) -> {
+            if (gui.getWaterLevel() >= sollWaterLevel / SumWaterLevel) {
+                simulatorCenterController.Stop();
+            } else {
+                try {
+                    FillReplaceLowerTankProcess();
+                } catch (Exception e1) {
+                    ErrorLogger.log(e1, "Error Exception", e1.getMessage(), ErrorLogger.ERROR_MESSAGE);
+                }
+            }
+        };
+        fillingReplaceTimer = new Timer(delay, fillingReplaceTimerListener);
 
         ActionListener heatingTimerListener = (ActionEvent e) -> {
             if (gui.getTemperature() > sollWaterTemp) {
@@ -140,6 +154,10 @@ public class FunctionController {
 
     public void startFillLowerTankProcess() {
         fillingTimer.start();
+    }
+    
+    public void startFillReplaceLowerTankProcess() {
+        fillingReplaceTimer.start();
     }
 
     public void startFillUpperTankProcess() {
@@ -262,6 +280,65 @@ public class FunctionController {
         }
         setFaultState();
     }
+    
+    private void FillReplaceLowerTankProcess() throws Exception {
+        // fill lower tank
+        gui.setProcessLabelText("Process: Filling2");
+        gui.setAperturePercentage(gui.getSliderValue());
+        gui.setValveStateV113(true);
+        if ((gui.getWaterLevel() < sollWaterLevel / SumWaterLevel) && (gui.getValveStateV113() == true)) {
+            gui.setWaterLevel(gui.getWaterLevel() + (flowrateValve / 1000 * delay));
+            gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 100);
+            gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 100);
+            gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
+        }
+        gui.setAirState(false);
+        gui.setAirFlowRate(0.0);
+        if (((System.currentTimeMillis()) - starttime) > 500) {
+            calcChangeRate(System.currentTimeMillis() - starttime);
+            DataBuffer.data.getJSONObject(0).put("value", "on");
+            DataBuffer.data.getJSONObject(1).put("value", "off");
+            DataBuffer.data.getJSONObject(2).put("value", String.valueOf(gui.getTemperature()));
+            DataBuffer.data.getJSONObject(2).put("change_rate", String.valueOf(changeRateTemperature));
+            DataBuffer.data.getJSONObject(3).put("value", "OK");
+            DataBuffer.data.getJSONObject(4).put("value", "on");
+            DataBuffer.data.getJSONObject(5).put("value", "off");
+            DataBuffer.data.getJSONObject(6).put("value", "on");
+            DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
+            DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
+            DataBuffer.data.getJSONObject(8).put("value", "off");
+            DataBuffer.data.getJSONObject(9).put("value", "off");
+            DataBuffer.data.getJSONObject(10).put("value", "on");
+            DataBuffer.data.getJSONObject(11).put("value", "off");
+            DataBuffer.data.getJSONObject(12).put("value", "off");
+            DataBuffer.data.getJSONObject(13).put("value", String.valueOf(gui.getWaterPressure()));
+            DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
+            DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
+            DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
+            DataBuffer.data.getJSONObject(15).put("value", "off");
+            DataBuffer.data.getJSONObject(16).put("value", "off");
+            DataBuffer.data.getJSONObject(17).put("value", "on");
+            DataBuffer.data.getJSONObject(18).put("value", "on");
+            DataBuffer.data.getJSONObject(19).put("value", "on");
+            DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
+            DataBuffer.data.getJSONObject(20).put("change_rate", String.valueOf(changeRateAirFlow));
+            DataBuffer.data.getJSONObject(21).put("value", String.valueOf(gui.getAirPressure()));
+            DataBuffer.data.getJSONObject(21).put("change_rate", String.valueOf(changeRateAirPressure));
+            DataBuffer.data.getJSONObject(22).put("value", "on");
+            DataBuffer.data.getJSONObject(23).put("value", "on");
+            DataBuffer.data.getJSONObject(24).put("value", "on");
+            DataBuffer.data.getJSONObject(25).put("value", "OK");
+            setFaultValue();
+            JSONObject sendData = new JSONObject();
+            sendData.put("components", DataBuffer.data);
+            sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
+            sendData.put("process_id", new Integer(2));
+            starttime = System.currentTimeMillis();
+            simulatorCenterController.getWatchListGUI().refresh();
+            simulatorCenterController.getFDMController().checkData(sendData);
+        }
+        setFaultState();
+    }
 
     // check Water Level for sollWaterLevel
     protected void CheckSollWaterLevelProcess() throws Exception {
@@ -321,6 +398,7 @@ public class FunctionController {
         gui.setAperturePercentage(gui.getSliderValue());
         gui.setHeaterState(true);
         gui.setTemperatureDisplay(gui.getTemperature() + heatPower * delay / 1000);
+        gui.setTemperatureDisplay2(gui.getTemperature() + heatPower * delay / 1000);
         gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 100);
         gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 100);
         gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
@@ -570,6 +648,7 @@ public class FunctionController {
     public void stop() {
         stopTimer.start();
         fillingTimer.stop();
+        fillingReplaceTimer.stop();
         heatingTimer.stop();
         pumpingTimer.stop();
         airpumpingTimer.stop();
@@ -577,6 +656,7 @@ public class FunctionController {
         gui.setProcessLabelText("Stop");
         gui.setPumpState(false);
         gui.setValveState(false);
+        gui.setValveStateV113(false);
         gui.setAirState(false);
         gui.setHeaterState(false);
         gui.setBallState(false);
@@ -589,6 +669,7 @@ public class FunctionController {
         stop();
         gui.setWaterLevel(initWaterLevel / SumWaterLevel);
         gui.setTemperatureDisplay(initWaterTemp);
+        gui.setTemperatureDisplay2(initWaterTemp);
         gui.setAirPressure(initAirPressure);
         if (stopTimer.isRunning()) {
             stopTimer.stop();
@@ -604,6 +685,7 @@ public class FunctionController {
                 case 2:
                     gui.setHeaterState(false);
                     gui.setTemperatureDisplay(Double.valueOf(fault.getString("shift_value")));
+                    gui.setTemperatureDisplay2(Double.valueOf(fault.getString("shift_value")));
                     break;
                 case 3:
                     break;
@@ -767,5 +849,7 @@ public class FunctionController {
         }
 
     }
+
+    
 
 }
