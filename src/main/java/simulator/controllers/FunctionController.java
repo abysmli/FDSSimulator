@@ -22,17 +22,17 @@ import org.json.JSONObject;
  */
 public class FunctionController {
 
-    protected final int delay = 30;
-    protected final double flowrateValve = 0.05;
-    protected final double sollWaterLevel = 8;
-    protected final double initWaterLevel = 2;
-    protected final double sollWaterTemp = 28;
-    protected final double initWaterTemp = 25;
-    protected final double SumWaterLevel = 12;
-    protected final double heatPower = 0.5;
-    protected final double AirFlow = 7.0;
-    protected final double initAirPressure = 0.0;
-    protected final double sollAirPressure = 6.0;
+    protected int delay = 20;
+    protected double flowrateValve = 0.05;
+    protected double sollWaterLevel = 8;
+    protected double initWaterLevel = 2;
+    protected double sollWaterTemp = 30;
+    protected double initWaterTemp = 20;
+    protected double SumWaterLevel = 12;
+    protected double heatPower = 3;
+    protected double AirFlow = 7.0;
+    protected double initAirPressure = 0.0;
+    protected double sollAirPressure = 6.0;
 
     private double oldTemperature, oldWaterLevel, oldWaterPressure, oldWaterFlow, oldAirPressure, oldAirFlow,
             changeRateTemperature, changeRateWaterLevel, changeRateWaterPressure, changeRateWaterFlow,
@@ -169,7 +169,7 @@ public class FunctionController {
     }
 
     protected void AirPumpingProcess() throws Exception {
-        gui.setProcessLabelText("Process: Air Pumping");
+//        gui.setProcessLabelText("Process: Air Pumping");
         gui.setAirState(true);
         gui.setAirFlowRate(AirFlow);
         gui.setAirPressure(gui.getAirPressure() + gui.getAirFlow() * delay / 10000);
@@ -221,7 +221,7 @@ public class FunctionController {
 
     protected void FillLowerTankProcess() throws Exception {
         // fill lower tank
-        gui.setProcessLabelText("Process: Filling");
+//        gui.setProcessLabelText("Process: Filling");
         gui.setAperturePercentage(gui.getSliderValue());
         gui.setManualValveState(true);
         gui.setValveState(true);
@@ -283,7 +283,7 @@ public class FunctionController {
     
     private void FillReplaceLowerTankProcess() throws Exception {
         // fill lower tank
-        gui.setProcessLabelText("Process: Filling2");
+//        gui.setProcessLabelText("Process: Filling2");
         gui.setAperturePercentage(gui.getSliderValue());
         gui.setValveStateV113(true);
         if ((gui.getWaterLevel() < sollWaterLevel / SumWaterLevel) && (gui.getValveStateV113() == true)) {
@@ -342,7 +342,7 @@ public class FunctionController {
 
     // check Water Level for sollWaterLevel
     protected void CheckSollWaterLevelProcess() throws Exception {
-        gui.setProcessLabelText("Process: Checking Filling");
+//        gui.setProcessLabelText("Process: Checking Filling");
         gui.setAperturePercentage(gui.getSliderValue());
         gui.setAirState(false);
         gui.setAirFlowRate(0.0);
@@ -394,7 +394,7 @@ public class FunctionController {
     }
 
     protected void HeatProcess() throws Exception {
-        gui.setProcessLabelText("Process: Heating");
+//        gui.setProcessLabelText("Process: Heating");
         gui.setAperturePercentage(gui.getSliderValue());
         gui.setHeaterState(true);
         gui.setTemperatureDisplay(gui.getTemperature() + heatPower * delay / 1000);
@@ -451,7 +451,7 @@ public class FunctionController {
     }
 
     protected void CheckTemperaturProcess() throws Exception {
-        gui.setProcessLabelText("Process: Checking Temperature");
+//        gui.setProcessLabelText("Process: Checking Temperature");
         gui.setAperturePercentage(gui.getSliderValue());
         gui.setHeaterState(false);
         gui.setPumpState(true);
@@ -505,7 +505,7 @@ public class FunctionController {
     }
 
     protected void FillUpperTankProcess() throws Exception {
-        gui.setProcessLabelText("Process: Pumping");
+//        gui.setProcessLabelText("Process: Pumping");
         double flowrate = gui.getSliderValue();
         if (flowrate == 0.0) {
             gui.setPumpMotorState(false);
@@ -576,7 +576,7 @@ public class FunctionController {
 
     // check water level for initWaterLevel
     protected void CheckInitWaterLevelProcess() throws Exception {
-        gui.setProcessLabelText("Process: Checking WaterLevel");
+//        gui.setProcessLabelText("Process: Checking WaterLevel");
         gui.setAperturePercentage(gui.getSliderValue());
         gui.setPumpState(false);
         gui.setFlowRate(0.0);

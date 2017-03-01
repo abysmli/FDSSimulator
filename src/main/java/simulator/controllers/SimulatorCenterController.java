@@ -58,23 +58,23 @@ public class SimulatorCenterController {
     }
 
     public void HeatWater35() {
-        taskController.startSimulationAllProcess();
-//        buttonStatusChange(true);
-    }
-
-    public void HeatWater65() {
-        taskController.startSimulationWithAirPump();
-//        buttonStatusChange(true);
+        tasksList.addTasks("Heat 35°C Water");
+        taskController.taskList.add(1);
     }
 
     public void HeatWater55() {
-        taskController.startSimulationWithHeat();
-//        buttonStatusChange(true);
+        tasksList.addTasks("Heat 55°C Water");
+        taskController.taskList.add(2);
+    }
+
+    public void HeatWater75() {
+        tasksList.addTasks("Heat 75°C Water");
+        taskController.taskList.add(3);
     }
 
     public void Clean() {
-        taskController.startClean();
-//        buttonStatusChange(true);
+        tasksList.addTasks("Clean Pipe");
+        taskController.taskList.add(4);
     }
 
     public void FillingProcess() {
@@ -203,30 +203,33 @@ public class SimulatorCenterController {
     }
 
     private void deactiveFunction(int id) {
+        System.out.println(id);
         switch (id) {
             case 1:
                 menugui.setHeatingButtonEnable(false);
-                menugui.setSimulationAllTaskButtonEnable(false);
-                menugui.setSimulationHeatTaskButtonEnable(false);
+                menugui.setTask1ButtonEnable(false);
+                menugui.setTask2ButtonEnable(false);
                 break;
             case 2:
                 menugui.setFillingButtonEnable(false);
                 menugui.setAirPumpingButtonEnable(false);
-                menugui.setSimulationAllTaskButtonEnable(false);
-                menugui.setSimulationAirPumpTaskButtonEnable(false);
-                menugui.setSimulationCleanTaskButtonEnable(false);
-                menugui.setSimulationHeatTaskButtonEnable(false);
+                menugui.setTask1ButtonEnable(false);
+                menugui.setTask3ButtonEnable(false);
+                menugui.setTask4ButtonEnable(false);
+                menugui.setTask2ButtonEnable(false);
                 break;
             case 3:
                 menugui.setPumpingButtonEnable(false);
-                menugui.setSimulationAllTaskButtonEnable(false);
-                menugui.setSimulationAirPumpTaskButtonEnable(false);
-                menugui.setSimulationCleanTaskButtonEnable(false);
-                menugui.setSimulationHeatTaskButtonEnable(false);
+                menugui.setTask1ButtonEnable(false);
+                menugui.setTask3ButtonEnable(false);
+                menugui.setTask4ButtonEnable(false);
+                menugui.setTask2ButtonEnable(false);
                 break;
             default:
                 break;
         }
+        tasksList.disableTask(2);
+        tasksList.disableTask(2);
     }
 
     public MenuGui getMenuGUI() {
@@ -276,14 +279,22 @@ public class SimulatorCenterController {
             menugui.setAbfStatus("stop");
         }
         menugui.setStopButtonEnable(flag);
-        menugui.setSimulationAllTaskButtonEnable(!flag);
-        menugui.setSimulationHeatTaskButtonEnable(!flag);
-        menugui.setSimulationAirPumpTaskButtonEnable(!flag);
-        menugui.setSimulationCleanTaskButtonEnable(!flag);
+        menugui.setTask1ButtonEnable(!flag);
+        menugui.setTask2ButtonEnable(!flag);
+        menugui.setTask3ButtonEnable(!flag);
+        menugui.setTask4ButtonEnable(!flag);
         menugui.setFillingButtonEnable(!flag);
         menugui.setFillingReplaceButtonEnable(!flag);
         menugui.setHeatingButtonEnable(!flag);
         menugui.setPumpingButtonEnable(!flag);
         menugui.setAirPumpingButtonEnable(!flag);
+    }
+
+    public void StartTasks() {
+        taskController.startTasks();
+    }
+
+    public void clearTasks() {
+        taskController.taskList.clear();
     }
 }

@@ -65,7 +65,7 @@ public class AddFaultGUI {
         ComponentInfo.setBounds(15, 340, 430, 200);
         AddFaultGUI.getContentPane().add(ComponentInfo);
 
-        JLabel OptionsTitle = new JLabel("Fault Type (Send to FDS Server directly.)");
+        JLabel OptionsTitle = new JLabel("Fault Type (Send to FRS Server directly.)");
         OptionsTitle.setFont(new Font("Ubuntu", 0, 18));
         OptionsTitle.setBounds(440, 320, 400, 30);
         AddFaultGUI.getContentPane().add(OptionsTitle);

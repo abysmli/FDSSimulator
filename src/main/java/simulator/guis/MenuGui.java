@@ -19,7 +19,7 @@ public class MenuGui extends JPanel {
     private final SimulatorCenterController simulatorCenterController;
 
     JLabel currentWaterLevel1, currentWaterLevel2, currentWaterTemp, abfStatus, connectionStatus;
-    JButton SimulationAllTaskButton, SimulationHeatTaskButton, SimulationAirPumpTaskButton, SimulationCleanTaskButton, StartButton, StopButton, FillingButton, FillingReplaceButton, HeatingButton, PumpingButton, AirPumpingButton, WatchListButton, AddFaultButton, ResetButton;
+    JButton Task1Button, Task2Button, Task3Button, Task4Button, StartButton, StopButton, FillingButton, FillingReplaceButton, HeatingButton, PumpingButton, AirPumpingButton, WatchListButton, AddFaultButton, ResetButton;
 
     /**
      * Create the panel.
@@ -87,25 +87,25 @@ public class MenuGui extends JPanel {
         tasklabel.setBounds(104, 180, 200, 25);
         add(tasklabel);
 
-        SimulationAllTaskButton = new JButton("Heat 35°C Water");
-        SimulationAllTaskButton.setBounds(16, 210, 128, 37);
-//        SimulationAllTaskButton.setToolTipText("Simulate all functions periodic.");
-        add(SimulationAllTaskButton);
+        Task1Button = new JButton("Heat 35°C Water");
+        Task1Button.setBounds(16, 210, 128, 37);
+//        Task1Button.setToolTipText("Simulate all functions periodic.");
+        add(Task1Button);
 
-        SimulationHeatTaskButton = new JButton("Heat 55°C Water");
-        SimulationHeatTaskButton.setBounds(162, 210, 128, 37);
-//        SimulationHeatTaskButton.setToolTipText("Simulate Filling and Pumping with Heating periodic.");
-        add(SimulationHeatTaskButton);
+        Task2Button = new JButton("Heat 55°C Water");
+        Task2Button.setBounds(162, 210, 128, 37);
+//        Task2Button.setToolTipText("Simulate Filling and Pumping with Heating periodic.");
+        add(Task2Button);
 
-        SimulationAirPumpTaskButton = new JButton("Heat 75°C Water");
-        SimulationAirPumpTaskButton.setBounds(16, 260, 128, 37);
-//        SimulationAirPumpTaskButton.setToolTipText("Simulate Filling and Pumping with Air Pumping periodic.");
-        add(SimulationAirPumpTaskButton);
+        Task3Button = new JButton("Heat 75°C Water");
+        Task3Button.setBounds(16, 260, 128, 37);
+//        Task3Button.setToolTipText("Simulate Filling and Pumping with Air Pumping periodic.");
+        add(Task3Button);
 
-        SimulationCleanTaskButton = new JButton("Clean Pipe");
-        SimulationCleanTaskButton.setBounds(162, 260, 128, 37);
-//        SimulationCleanTaskButton.setToolTipText("Simulate only Filling and Pumping periodic, in order to clean the Tanks.");
-        add(SimulationCleanTaskButton);
+        Task4Button = new JButton("Clean Pipe");
+        Task4Button.setBounds(162, 260, 128, 37);
+//        Task4Button.setToolTipText("Simulate only Filling and Pumping periodic, in order to clean the Tanks.");
+        add(Task4Button);
 
         JLabel processlabel = new JLabel("Functions");
         processlabel.setFont(new Font("Ubuntu", 0, 20));
@@ -143,7 +143,6 @@ public class MenuGui extends JPanel {
         add(controllerlabel);
 
         StartButton = new JButton("Start");
-        StartButton.setEnabled(false);
         StartButton.setBounds(16, 520, 128, 37);
         StartButton.setToolTipText("Start all Tasks.");
         add(StartButton);
@@ -199,20 +198,23 @@ public class MenuGui extends JPanel {
         connectionStatus.setBounds(200, 720, 100, 20);
         connectionStatus.setFont(new Font("Ubuntu", 0, 14));
         add(connectionStatus);
-
+        
+        this.StartButton.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.StartTasks();
+        });
         this.ResetButton.addActionListener((ActionEvent e) -> {
             simulatorCenterController.Reset();
         });
-        this.SimulationAllTaskButton.addActionListener((ActionEvent e) -> {
+        this.Task1Button.addActionListener((ActionEvent e) -> {
             simulatorCenterController.HeatWater35();
         });
-        this.SimulationHeatTaskButton.addActionListener((ActionEvent e) -> {
+        this.Task2Button.addActionListener((ActionEvent e) -> {
+            simulatorCenterController.HeatWater75();
+        });
+        this.Task3Button.addActionListener((ActionEvent e) -> {
             simulatorCenterController.HeatWater55();
         });
-        this.SimulationAirPumpTaskButton.addActionListener((ActionEvent e) -> {
-            simulatorCenterController.HeatWater65();
-        });
-        this.SimulationCleanTaskButton.addActionListener((ActionEvent e) -> {
+        this.Task4Button.addActionListener((ActionEvent e) -> {
             simulatorCenterController.Clean();
         });
         this.StopButton.addActionListener((ActionEvent e) -> {
@@ -244,20 +246,20 @@ public class MenuGui extends JPanel {
         }
     }
 
-    public void setSimulationAllTaskButtonEnable(boolean enable) {
-        SimulationAllTaskButton.setEnabled(enable);
+    public void setTask1ButtonEnable(boolean enable) {
+        Task1Button.setEnabled(enable);
     }
 
-    public void setSimulationHeatTaskButtonEnable(boolean enable) {
-        SimulationHeatTaskButton.setEnabled(enable);
+    public void setTask2ButtonEnable(boolean enable) {
+        Task2Button.setEnabled(enable);
     }
 
-    public void setSimulationAirPumpTaskButtonEnable(boolean enable) {
-        SimulationAirPumpTaskButton.setEnabled(enable);
+    public void setTask3ButtonEnable(boolean enable) {
+        Task3Button.setEnabled(enable);
     }
 
-    public void setSimulationCleanTaskButtonEnable(boolean enable) {
-        SimulationCleanTaskButton.setEnabled(enable);
+    public void setTask4ButtonEnable(boolean enable) {
+        Task4Button.setEnabled(enable);
     }
 
     public void setStopButtonEnable(boolean enable) {

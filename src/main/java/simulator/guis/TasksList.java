@@ -6,19 +6,19 @@
 package simulator.guis;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import simulator.controllers.SimulatorCenterController;
 
 /**
@@ -93,9 +93,18 @@ public class TasksList extends JPanel {
         avtastlist.addRow(new String[]{String.valueOf(avtastlist.getRowCount() + 1), sTask});
     }
 
+    public void removeTasks(int index) {
+        avtastlist.removeRow(index);
+    }
+
     private void delTasks() {
         for (int i = avtastlist.getRowCount() - 1; i > -1; i--) {
             avtastlist.removeRow(i);
         }
+        simulatorCenterController.clearTasks();
+    }
+
+    public void disableTask(int TaskNo) {
+        avtastlist.moveRow(TaskNo - 1, TaskNo - 1, avtastlist.getRowCount() - 1);
     }
 }
