@@ -25,9 +25,9 @@ public class FunctionController {
     protected int delay = 20;
     protected double flowrateValve = 0.05;
     protected double sollWaterLevel = 8;
-    protected double initWaterLevel = 2;
-    protected double sollWaterTemp = 30;
-    protected double initWaterTemp = 20;
+    protected double initWaterLevel = 1;
+    protected double sollWaterTemp = 20;
+    protected double initWaterTemp = 15;
     protected double SumWaterLevel = 12;
     protected double heatPower = 3;
     protected double AirFlow = 7.0;
@@ -59,11 +59,11 @@ public class FunctionController {
         
         ActionListener stopTimerListener = (ActionEvent e) -> {
             if (gui.getTemperature() > 15.0) {
-                gui.setTemperatureDisplay(gui.getTemperature() - 0.1 * delay / 1000);
-                gui.setTemperatureDisplay2(gui.getTemperature() - 0.1 * delay / 1000);
+                gui.setTemperatureDisplay(gui.getTemperature() - 1.0 * delay / 1000);
+                gui.setTemperatureDisplay2(gui.getTemperature() - 1.0 * delay / 1000);
             }
             if (gui.getAirPressure() > 0) {
-                gui.setAirPressure(gui.getAirPressure() - 0.1 * delay / 3000);
+                gui.setAirPressure(gui.getAirPressure() - 1.0 * delay / 3000);
             }
         };
         stopTimer = new Timer(delay, stopTimerListener);
@@ -228,7 +228,7 @@ public class FunctionController {
         gui.setBallState(true);
         if ((gui.getWaterLevel() < sollWaterLevel / SumWaterLevel) && (gui.getValveState() == true)
                 && (gui.getManualValveState() == true)) {
-            gui.setWaterLevel(gui.getWaterLevel() + (flowrateValve / 1000 * delay));
+            gui.setWaterLevel(gui.getWaterLevel() + (flowrateValve / 500 * delay));
             gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 100);
             gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 100);
             gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
@@ -500,7 +500,7 @@ public class FunctionController {
         sendData.put("process_id", new Integer(3));
         starttime = System.currentTimeMillis();
 //        simulatorCenterController.getWatchListGUI().refresh();
-//        simulatorCenterController.getFDMController().checkData(sendData);
+        simulatorCenterController.getFDMController().checkData(sendData);
         setFaultState();
     }
 
@@ -625,8 +625,8 @@ public class FunctionController {
         sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
         sendData.put("process_id", new Integer(4));
         starttime = System.currentTimeMillis();
-//        simulatorCenterController.getWatchListGUI().refresh();
-//        simulatorCenterController.getFDMController().checkData(sendData);
+        simulatorCenterController.getWatchListGUI().refresh();
+        simulatorCenterController.getFDMController().checkData(sendData);
         setFaultState();
     }
 

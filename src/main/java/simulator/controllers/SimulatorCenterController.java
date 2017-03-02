@@ -58,17 +58,17 @@ public class SimulatorCenterController {
     }
 
     public void HeatWater35() {
-        tasksList.addTasks("Heat 35°C Water");
+        tasksList.addTasks("Automatic Cycling 30°C");
         taskController.taskList.add(1);
     }
 
     public void HeatWater55() {
-        tasksList.addTasks("Heat 55°C Water");
+        tasksList.addTasks("Heat 3L,45°C Water");
         taskController.taskList.add(2);
     }
 
     public void HeatWater75() {
-        tasksList.addTasks("Heat 75°C Water");
+        tasksList.addTasks("Pour 5L Water");
         taskController.taskList.add(3);
     }
 

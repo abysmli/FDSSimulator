@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.swing.Timer;
 
 /**
@@ -87,91 +88,6 @@ public class TaskController extends FunctionController {
         };
         AllFunctionsTimer = new Timer(delay, AllFunctionsTimerListener);
 
-//        ActionListener SimulationHeatTimerListener = (ActionEvent e) -> {
-//            try {
-//                switch (FunctionNumber) {
-//                    case 1:
-//                        if (gui.getWaterLevel() >= sollWaterLevel / SumWaterLevel) {
-//                            FunctionNumber = 2;
-//                        } else {
-//                            FillLowerTankProcess();
-//                        }
-//                        break;
-//                    case 2:
-//                        CheckSollWaterLevelProcess();
-//                        FunctionNumber = 3;
-//                        break;
-//                    case 3:
-//                        if (gui.getTemperature() > sollWaterTemp) {
-//                            FunctionNumber = 4;
-//                        } else {
-//                            HeatProcess();
-//                        }
-//                        break;
-//                    case 4:
-//                        CheckTemperaturProcess();
-//                        FunctionNumber = 5;
-//                        break;
-//                    case 5:
-//                        if (gui.getWaterLevel() <= initWaterLevel / SumWaterLevel) {
-//                            FunctionNumber = 6;
-//                        } else {
-//                            FillUpperTankProcess();
-//                        }
-//                        break;
-//                    case 6:
-//                        CheckInitWaterLevelProcess();
-//                        FunctionNumber = 1;
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            } catch (Exception e1) {
-//                ErrorLogger.log(e1, "Error Exception", e1.getMessage(), ErrorLogger.ERROR_MESSAGE);
-//            }
-//        };
-//        SimulationWithHeatTaskTimer = new Timer(delay, SimulationHeatTimerListener);
-//
-//        ActionListener SimulationAirPumpTimerListener = (ActionEvent e) -> {
-//            try {
-//                switch (FunctionNumber) {
-//                    case 1:
-//                        if (gui.getAirPressure() >= sollAirPressure) {
-//                            FunctionNumber = 2;
-//                        } else {
-//                            AirPumpingProcess();
-//                        }
-//                        break;
-//                    case 2:
-//                        if (gui.getWaterLevel() >= sollWaterLevel / SumWaterLevel) {
-//                            FunctionNumber = 3;
-//                        } else {
-//                            FillLowerTankProcess();
-//                        }
-//                        break;
-//                    case 3:
-//                        CheckSollWaterLevelProcess();
-//                        FunctionNumber = 4;
-//                        break;
-//                    case 4:
-//                        if (gui.getWaterLevel() <= initWaterLevel / SumWaterLevel) {
-//                            FunctionNumber = 5;
-//                        } else {
-//                            FillUpperTankProcess();
-//                        }
-//                        break;
-//                    case 5:
-//                        CheckInitWaterLevelProcess();
-//                        FunctionNumber = 1;
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            } catch (Exception e1) {
-//                ErrorLogger.log(e1, "Error Exception", e1.getMessage(), ErrorLogger.ERROR_MESSAGE);
-//            }
-//        };
-//        SimulationWithAirPumpTaskTimer = new Timer(delay, SimulationAirPumpTimerListener);
         ActionListener CleanTimerListener = (ActionEvent e) -> {
             try {
                 switch (FunctionNumber) {
@@ -213,16 +129,16 @@ public class TaskController extends FunctionController {
                 if (!AllFunctionsTimer.isRunning() && !CleanTaskTimer.isRunning()) {
                     switch (taskList.get(0)) {
                         case 1:
-                            Heat35Water();
-                            super.gui.setProcessLabelText("Current Task: Heat 35°C Water");
+                            AutomaticCycling();
+                            super.gui.setProcessLabelText("Current Task: Automatic Cycling 30°C");
                             break;
                         case 2:
-                            Heat55Water();
-                            super.gui.setProcessLabelText("Current Task: Heat 55°C Water");
+                            Water3L45();
+                            super.gui.setProcessLabelText("Current Task: Heat 3L,45°C Water");
                             break;
                         case 3:
-                            Heat75Water();
-                            super.gui.setProcessLabelText("Current Task: Heat 75°C Water");
+                            Water5L();
+                            super.gui.setProcessLabelText("Current Task: Pour 5L Water");
                             break;
                         case 4:
                             startClean();
@@ -236,27 +152,28 @@ public class TaskController extends FunctionController {
                 this.reset();
             }
         };
-        StartTimer = new Timer(delay, StartTimerListener);
+        StartTimer = new Timer(2000, StartTimerListener);
     }
 
-    public void Heat35Water() {
+    public void AutomaticCycling() {
         starttime = System.currentTimeMillis();
-        super.sollWaterTemp = 35;
+        super.sollWaterTemp = 30;
         FunctionNumber = 1;
         AllFunctionsTimer.start();
 
     }
 
-    public void Heat55Water() {
+    public void Water3L45() {
         starttime = System.currentTimeMillis();
-        super.sollWaterTemp = 55;
+        super.sollWaterTemp = 45;
+        super.sollWaterLevel = 3;
         FunctionNumber = 1;
         AllFunctionsTimer.start();
     }
 
-    public void Heat75Water() {
+    public void Water5L() {
         starttime = System.currentTimeMillis();
-        super.sollWaterTemp = 75;
+        super.sollWaterLevel = 5;
         FunctionNumber = 1;
         AllFunctionsTimer.start();
     }

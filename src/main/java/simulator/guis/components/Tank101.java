@@ -55,7 +55,7 @@ public class Tank101 extends SimulationComponent {
         g.drawString(name, (int) (this.getWidthComponent() / 2 - g.getFontMetrics().stringWidth(this.name) / 2), 11);
 
         // water level
-        String waterLevelDisplay = String.valueOf(Math.round(this.level * 100.0)) + " %";
+        String waterLevelDisplay = String.valueOf(Math.round(this.level * 10.0)) + " L";
         g.drawString(waterLevelDisplay, (int) (this.getWidthComponent() / 2 - g.getFontMetrics().stringWidth(waterLevelDisplay) / 2), 50);
 
     }
