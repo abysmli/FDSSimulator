@@ -6,7 +6,6 @@
 package simulator.guis;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +17,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import simulator.controllers.SimulatorCenterController;
 
 /**
@@ -49,7 +47,6 @@ public class TasksList extends JPanel {
         setLayout(null);
 
         JPanel taskpanel = new JPanel();
-        // taskpanel.setBorder(new LineBorder(new Color(128, 128, 128)));
         taskpanel.setBounds(0, 50, 200, 770);
         taskpanel.setLayout(null);
         String[] taskcolumn = {"Nr.", "Name"};
@@ -57,7 +54,6 @@ public class TasksList extends JPanel {
         tasktable = new JTable();
         tasktable.setRowSelectionAllowed(true);
         tasktable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        // tasktable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tasktable.setRowHeight(20);
         avtastlist.setColumnIdentifiers(taskcolumn);
 
@@ -79,11 +75,11 @@ public class TasksList extends JPanel {
                 delTasks();
             }
         });
-
         tasklabel = new JLabel("List of Tasks");
         tasklabel.setFont(new Font("Ubuntu", 0, 20));
         tasklabel.setBounds(50, 10, 150, 20);
-
+        tasktable.getColumnModel().getColumn(0).setPreferredWidth(30);
+        tasktable.getColumnModel().getColumn(1).setPreferredWidth(170);
         add(tasklabel);
         add(clearbutton);
         add(taskpanel);

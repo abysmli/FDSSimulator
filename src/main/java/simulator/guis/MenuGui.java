@@ -87,24 +87,24 @@ public class MenuGui extends JPanel {
         tasklabel.setBounds(104, 180, 200, 25);
         add(tasklabel);
 
-        Task1Button = new JButton("Heat 35°C Water");
+        Task1Button = new JButton("Auto. Cycl. 30°C");
         Task1Button.setBounds(16, 210, 128, 37);
-//        Task1Button.setToolTipText("Simulate all functions periodic.");
+        Task1Button.setToolTipText("Automatic Cycling in order heat 30°C Water");
         add(Task1Button);
 
-        Task2Button = new JButton("Heat 55°C Water");
+        Task2Button = new JButton("3L 45°C Water");
         Task2Button.setBounds(162, 210, 128, 37);
-//        Task2Button.setToolTipText("Simulate Filling and Pumping with Heating periodic.");
+        Task2Button.setToolTipText("Heat 3L, 45°C Water in Tank 101");
         add(Task2Button);
 
-        Task3Button = new JButton("Heat 75°C Water");
+        Task3Button = new JButton("5L Water");
         Task3Button.setBounds(16, 260, 128, 37);
-//        Task3Button.setToolTipText("Simulate Filling and Pumping with Air Pumping periodic.");
+        Task3Button.setToolTipText("Pour 5L Water in Tank 101");
         add(Task3Button);
 
         Task4Button = new JButton("Clean Pipe");
         Task4Button.setBounds(162, 260, 128, 37);
-//        Task4Button.setToolTipText("Simulate only Filling and Pumping periodic, in order to clean the Tanks.");
+        Task4Button.setToolTipText("Filling and Pumping periodic, in order to clean the Tanks.");
         add(Task4Button);
 
         JLabel processlabel = new JLabel("Functions");
@@ -117,7 +117,7 @@ public class MenuGui extends JPanel {
         FillingButton.setToolTipText("Execute Filling Function. Water will flowing from upper Tank into lower Tank.");
         add(FillingButton);
         
-        FillingReplaceButton = new JButton("Filling2");
+        FillingReplaceButton = new JButton("Filling rep.");
         FillingReplaceButton.setBounds(162, 340, 128, 37);
         FillingReplaceButton.setToolTipText("Execute Filling2 Function. Water will flowing from upper Tank into lower Tank.");
         add(FillingReplaceButton);
