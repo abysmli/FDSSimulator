@@ -13,7 +13,7 @@ import simulator.guis.MenuGui;
 import simulator.guis.WatchListGUI;
 import simulator.utils.DataBuffer;
 import simulator.utils.ErrorLogger;
-import simulator.utils.FDSHttpRequestHandler;
+import fds.FDSHttpRequestHandler;
 import simulator.utils.SimulatorSetting;
 import fds.FDMGUI;
 import fds.controllers.FDMController;
@@ -284,6 +284,7 @@ public class SimulatorCenterController {
             menugui.setAbfStatus("stop");
         }
         menugui.setStopButtonEnable(flag);
+        menugui.setStartButtonEnable(!flag);
         menugui.setTask1ButtonEnable(!flag);
         menugui.setTask2ButtonEnable(!flag);
         menugui.setTask3ButtonEnable(!flag);
@@ -296,6 +297,7 @@ public class SimulatorCenterController {
     }
 
     public void StartTasks() {
+        buttonStatusChange(true);
         taskController.startTasks();
     }
 

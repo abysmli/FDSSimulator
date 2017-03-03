@@ -616,4 +616,8 @@ public class Gui extends JPanel {
     public void setUltraSensor113(int checkUltrasonicSensorState) {
         ((Switcher) this.switch113).setSwitcherState(checkUltrasonicSensorState);
     }
+
+    public void setMCState(boolean b) {
+        ((MC) this.mc).setMCSate(b);
+    }
 }

@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.swing.Timer;
 
 /**
@@ -76,7 +75,7 @@ public class TaskController extends FunctionController {
                         break;
                     case 7:
                         CheckInitWaterLevelProcess();
-                        this.stop();
+                        this.finishTaskStop();
                         removeFinishedTask();
                         break;
                     default:
@@ -112,7 +111,7 @@ public class TaskController extends FunctionController {
                     case 4:
                         CheckInitWaterLevelProcess();
                         FunctionNumber = 1;
-                        this.stop();
+                        this.finishTaskStop();
                         removeFinishedTask();
                         break;
                     default:
@@ -152,7 +151,7 @@ public class TaskController extends FunctionController {
                 this.reset();
             }
         };
-        StartTimer = new Timer(2000, StartTimerListener);
+        StartTimer = new Timer(500, StartTimerListener);
     }
 
     public void AutomaticCycling() {
@@ -183,9 +182,16 @@ public class TaskController extends FunctionController {
         FunctionNumber = 1;
         CleanTaskTimer.start();
     }
+    
+    public void finishTaskStop() {
+        AllFunctionsTimer.stop();
+        CleanTaskTimer.stop();
+        super.stop();
+    }
 
     @Override
     public void stop() {
+        StartTimer.stop();
         AllFunctionsTimer.stop();
         CleanTaskTimer.stop();
         super.stop();

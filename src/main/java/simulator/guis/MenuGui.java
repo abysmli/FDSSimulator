@@ -262,6 +262,10 @@ public class MenuGui extends JPanel {
         Task4Button.setEnabled(enable);
     }
 
+    public void setStartButtonEnable(boolean enable) {
+        StartButton.setEnabled(enable);
+    }
+    
     public void setStopButtonEnable(boolean enable) {
         StopButton.setEnabled(enable);
     }

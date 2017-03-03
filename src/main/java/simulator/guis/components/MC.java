@@ -46,7 +46,7 @@ public class MC extends SimulationComponent {
         }
     }
 
-    public void setHeaterSate(boolean state) {
+    public void setMCSate(boolean state) {
         this.state = state;
         repaint();
     }
