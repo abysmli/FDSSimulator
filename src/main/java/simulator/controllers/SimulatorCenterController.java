@@ -17,6 +17,7 @@ import simulator.utils.FDSHttpRequestHandler;
 import simulator.utils.SimulatorSetting;
 import fds.FDMGUI;
 import fds.controllers.FDMController;
+import fds.model.DatabaseHandler;
 import simulator.guis.TasksList;
 
 public class SimulatorCenterController {
@@ -31,8 +32,12 @@ public class SimulatorCenterController {
     private final FDSHttpRequestHandler http;
     private final TaskController taskController;
     private final FDMController FDMController;
+    private final DatabaseHandler databaseHandler;
 
     public SimulatorCenterController(Simulator application, FDMGUI FDMGui) throws Exception {
+        this.databaseHandler = new DatabaseHandler();
+        DataBuffer.initData = databaseHandler.getComponents();
+        DataBuffer.data = databaseHandler.getComponents();
         this.application = application;
         this.FDMGui = FDMGui;
 
@@ -57,17 +62,17 @@ public class SimulatorCenterController {
         FDMGui.setFDMController(FDMController);
     }
 
-    public void HeatWater35() {
+    public void AutoCycl30() {
         tasksList.addTasks("Automatic Cycling 30°C");
         taskController.taskList.add(1);
     }
 
-    public void HeatWater55() {
+    public void HeatWater3L45() {
         tasksList.addTasks("Heat 3L,45°C Water");
         taskController.taskList.add(2);
     }
 
-    public void HeatWater75() {
+    public void PourWater5L() {
         tasksList.addTasks("Pour 5L Water");
         taskController.taskList.add(3);
     }

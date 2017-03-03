@@ -37,8 +37,8 @@ public class AddFaultGUI {
         ComponentsTitle.setFont(new Font("Ubuntu", 0, 18));
         ComponentsTitle.setBounds(10, 10, 200, 30);
         AddFaultGUI.getContentPane().add(ComponentsTitle);
-        for (int i = 0; i < DataBuffer.data.length(); i++) {
-            JSONObject obj = DataBuffer.data.getJSONObject(i);
+        for (int i = 0; i < DataBuffer.initData.length(); i++) {
+            JSONObject obj = DataBuffer.initData.getJSONObject(i);
             JButton button = new JButton(obj.getString("series"));
             button.setBounds(10 + i % 6 * 150, 50 + i / 6 * 50, 140, 40);
             button.setFocusable(false);

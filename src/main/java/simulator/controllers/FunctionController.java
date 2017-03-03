@@ -23,12 +23,12 @@ import org.json.JSONObject;
 public class FunctionController {
 
     protected int delay = 20;
-    protected double flowrateValve = 0.05;
+    protected double flowrateValve = 0.5;
     protected double sollWaterLevel = 8;
     protected double initWaterLevel = 1;
+    protected double SumWaterLevel = 10;
     protected double sollWaterTemp = 20;
     protected double initWaterTemp = 15;
-    protected double SumWaterLevel = 12;
     protected double heatPower = 3;
     protected double AirFlow = 7.0;
     protected double initAirPressure = 0.0;
@@ -56,14 +56,14 @@ public class FunctionController {
         gui.setHeaterState(false);
         gui.setTemperatureDisplay(initWaterTemp);
         gui.setTemperatureDisplay2(initWaterTemp);
-        
+
         ActionListener stopTimerListener = (ActionEvent e) -> {
             if (gui.getTemperature() > 15.0) {
-                gui.setTemperatureDisplay(gui.getTemperature() - 1.0 * delay / 1000);
-                gui.setTemperatureDisplay2(gui.getTemperature() - 1.0 * delay / 1000);
+                gui.setTemperatureDisplay(gui.getTemperature() - 0.1 * delay / 1000);
+                gui.setTemperatureDisplay2(gui.getTemperature() - 0.1 * delay / 1000);
             }
             if (gui.getAirPressure() > 0) {
-                gui.setAirPressure(gui.getAirPressure() - 1.0 * delay / 3000);
+                gui.setAirPressure(gui.getAirPressure() - 0.1 * delay / 3000);
             }
         };
         stopTimer = new Timer(delay, stopTimerListener);
@@ -80,7 +80,7 @@ public class FunctionController {
             }
         };
         fillingTimer = new Timer(delay, fillingTimerListener);
-        
+
         ActionListener fillingReplaceTimerListener = (ActionEvent e) -> {
             if (gui.getWaterLevel() >= sollWaterLevel / SumWaterLevel) {
                 simulatorCenterController.Stop();
@@ -155,7 +155,7 @@ public class FunctionController {
     public void startFillLowerTankProcess() {
         fillingTimer.start();
     }
-    
+
     public void startFillReplaceLowerTankProcess() {
         fillingReplaceTimer.start();
     }
@@ -172,7 +172,13 @@ public class FunctionController {
 //        gui.setProcessLabelText("Process: Air Pumping");
         gui.setAirState(true);
         gui.setAirFlowRate(AirFlow);
-        gui.setAirPressure(gui.getAirPressure() + gui.getAirFlow() * delay / 10000);
+        gui.setAirPressure(gui.getAirPressure() + gui.getAirFlow() * delay / 3000);
+
+        gui.setUltraSensor117(checkUltrasonicSensorState(9));
+        gui.setUltraSensor114(checkUltrasonicSensorState(10));
+        gui.setUltraSensor111(checkUltrasonicSensorState(16));
+        gui.setUltraSensor112(checkUltrasonicSensorState(17));
+        gui.setUltraSensor113(checkUltrasonicSensorState(18));
         if (((System.currentTimeMillis()) - starttime) > 500) {
             calcChangeRate(System.currentTimeMillis() - starttime);
             DataBuffer.data.getJSONObject(0).put("value", "on");
@@ -185,8 +191,10 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(6).put("value", "on");
             DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
             DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
-            DataBuffer.data.getJSONObject(8).put("value", "off");
-            DataBuffer.data.getJSONObject(9).put("value", "off");
+            DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+            DataBuffer.data.getJSONObject(8).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+            DataBuffer.data.getJSONObject(9).put("change_rate", "0");
             DataBuffer.data.getJSONObject(10).put("value", "on");
             DataBuffer.data.getJSONObject(11).put("value", "off");
             DataBuffer.data.getJSONObject(12).put("value", "off");
@@ -194,9 +202,12 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
             DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
             DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
-            DataBuffer.data.getJSONObject(15).put("value", "off");
-            DataBuffer.data.getJSONObject(16).put("value", "off");
-            DataBuffer.data.getJSONObject(17).put("value", "on");
+            DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
+            DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
+            DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
+            DataBuffer.data.getJSONObject(17).put("change_rate", "0");
             DataBuffer.data.getJSONObject(18).put("value", "on");
             DataBuffer.data.getJSONObject(19).put("value", "on");
             DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
@@ -207,6 +218,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(23).put("value", "on");
             DataBuffer.data.getJSONObject(24).put("value", "on");
             DataBuffer.data.getJSONObject(25).put("value", "OK");
+            DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
+            DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
+            DataBuffer.data.getJSONObject(27).put("value", "off");
             setFaultValue();
             JSONObject sendData = new JSONObject();
             sendData.put("components", DataBuffer.data);
@@ -226,15 +240,21 @@ public class FunctionController {
         gui.setManualValveState(true);
         gui.setValveState(true);
         gui.setBallState(true);
-        if ((gui.getWaterLevel() < sollWaterLevel / SumWaterLevel) && (gui.getValveState() == true)
+        if ((gui.getWaterLevel() <= sollWaterLevel / SumWaterLevel) && (gui.getValveState() == true)
                 && (gui.getManualValveState() == true)) {
-            gui.setWaterLevel(gui.getWaterLevel() + (flowrateValve / 500 * delay));
-            gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 100);
-            gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 100);
+            gui.setWaterLevel((double) Math.round((gui.getWaterLevel() + (flowrateValve / 1000 * delay)) * 100) / 100);
+            gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 10);
+            gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 10);
             gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
         }
         gui.setAirState(false);
         gui.setAirFlowRate(0.0);
+        gui.setUltraSensor117(checkUltrasonicSensorState(9));
+        gui.setUltraSensor114(checkUltrasonicSensorState(10));
+        gui.setUltraSensor111(checkUltrasonicSensorState(16));
+        gui.setUltraSensor112(checkUltrasonicSensorState(17));
+        gui.setUltraSensor113(checkUltrasonicSensorState(18));
+
         if (((System.currentTimeMillis()) - starttime) > 500) {
             calcChangeRate(System.currentTimeMillis() - starttime);
             DataBuffer.data.getJSONObject(0).put("value", "on");
@@ -247,8 +267,10 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(6).put("value", "on");
             DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
             DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
-            DataBuffer.data.getJSONObject(8).put("value", "off");
-            DataBuffer.data.getJSONObject(9).put("value", "off");
+            DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+            DataBuffer.data.getJSONObject(8).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+            DataBuffer.data.getJSONObject(9).put("change_rate", "0");
             DataBuffer.data.getJSONObject(10).put("value", "on");
             DataBuffer.data.getJSONObject(11).put("value", "off");
             DataBuffer.data.getJSONObject(12).put("value", "off");
@@ -256,9 +278,12 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
             DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
             DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
-            DataBuffer.data.getJSONObject(15).put("value", "off");
-            DataBuffer.data.getJSONObject(16).put("value", "off");
-            DataBuffer.data.getJSONObject(17).put("value", "on");
+            DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
+            DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
+            DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
+            DataBuffer.data.getJSONObject(17).put("change_rate", "0");
             DataBuffer.data.getJSONObject(18).put("value", "on");
             DataBuffer.data.getJSONObject(19).put("value", "on");
             DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
@@ -269,6 +294,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(23).put("value", "on");
             DataBuffer.data.getJSONObject(24).put("value", "on");
             DataBuffer.data.getJSONObject(25).put("value", "OK");
+            DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
+            DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
+            DataBuffer.data.getJSONObject(27).put("value", "off");
             setFaultValue();
             JSONObject sendData = new JSONObject();
             sendData.put("components", DataBuffer.data);
@@ -280,20 +308,26 @@ public class FunctionController {
         }
         setFaultState();
     }
-    
+
     private void FillReplaceLowerTankProcess() throws Exception {
         // fill lower tank
 //        gui.setProcessLabelText("Process: Filling2");
         gui.setAperturePercentage(gui.getSliderValue());
         gui.setValveStateV113(true);
-        if ((gui.getWaterLevel() < sollWaterLevel / SumWaterLevel) && (gui.getValveStateV113() == true)) {
-            gui.setWaterLevel(gui.getWaterLevel() + (flowrateValve / 1000 * delay));
-            gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 100);
-            gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 100);
+        if ((gui.getWaterLevel() <= sollWaterLevel / SumWaterLevel) && (gui.getValveStateV113() == true)) {
+            gui.setWaterLevel((double) Math.round((gui.getWaterLevel() + (flowrateValve / 1000 * delay)) * 100) / 100);
+            gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 10);
+            gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 10);
             gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
         }
         gui.setAirState(false);
         gui.setAirFlowRate(0.0);
+
+        gui.setUltraSensor117(checkUltrasonicSensorState(9));
+        gui.setUltraSensor114(checkUltrasonicSensorState(10));
+        gui.setUltraSensor111(checkUltrasonicSensorState(16));
+        gui.setUltraSensor112(checkUltrasonicSensorState(17));
+        gui.setUltraSensor113(checkUltrasonicSensorState(18));
         if (((System.currentTimeMillis()) - starttime) > 500) {
             calcChangeRate(System.currentTimeMillis() - starttime);
             DataBuffer.data.getJSONObject(0).put("value", "on");
@@ -306,8 +340,10 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(6).put("value", "on");
             DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
             DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
-            DataBuffer.data.getJSONObject(8).put("value", "off");
-            DataBuffer.data.getJSONObject(9).put("value", "off");
+            DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+            DataBuffer.data.getJSONObject(8).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+            DataBuffer.data.getJSONObject(9).put("change_rate", "0");
             DataBuffer.data.getJSONObject(10).put("value", "on");
             DataBuffer.data.getJSONObject(11).put("value", "off");
             DataBuffer.data.getJSONObject(12).put("value", "off");
@@ -315,9 +351,12 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
             DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
             DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
-            DataBuffer.data.getJSONObject(15).put("value", "off");
-            DataBuffer.data.getJSONObject(16).put("value", "off");
-            DataBuffer.data.getJSONObject(17).put("value", "on");
+            DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
+            DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
+            DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
+            DataBuffer.data.getJSONObject(17).put("change_rate", "0");
             DataBuffer.data.getJSONObject(18).put("value", "on");
             DataBuffer.data.getJSONObject(19).put("value", "on");
             DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
@@ -328,6 +367,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(23).put("value", "on");
             DataBuffer.data.getJSONObject(24).put("value", "on");
             DataBuffer.data.getJSONObject(25).put("value", "OK");
+            DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
+            DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
+            DataBuffer.data.getJSONObject(27).put("value", "on");
             setFaultValue();
             JSONObject sendData = new JSONObject();
             sendData.put("components", DataBuffer.data);
@@ -351,6 +393,12 @@ public class FunctionController {
         gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 100);
         gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 100);
         gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
+
+        gui.setUltraSensor117(checkUltrasonicSensorState(9));
+        gui.setUltraSensor114(checkUltrasonicSensorState(10));
+        gui.setUltraSensor111(checkUltrasonicSensorState(16));
+        gui.setUltraSensor112(checkUltrasonicSensorState(17));
+        gui.setUltraSensor113(checkUltrasonicSensorState(18));
         calcChangeRate(System.currentTimeMillis() - starttime);
         DataBuffer.data.getJSONObject(0).put("value", "on");
         DataBuffer.data.getJSONObject(1).put("value", "off");
@@ -362,8 +410,10 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(6).put("value", "on");
         DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
         DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
-        DataBuffer.data.getJSONObject(8).put("value", "on");
-        DataBuffer.data.getJSONObject(9).put("value", "off");
+        DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+        DataBuffer.data.getJSONObject(8).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+        DataBuffer.data.getJSONObject(9).put("change_rate", "0");
         DataBuffer.data.getJSONObject(10).put("value", "on");
         DataBuffer.data.getJSONObject(11).put("value", "off");
         DataBuffer.data.getJSONObject(12).put("value", "off");
@@ -371,9 +421,12 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
         DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
         DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
-        DataBuffer.data.getJSONObject(15).put("value", "on");
-        DataBuffer.data.getJSONObject(16).put("value", "off");
-        DataBuffer.data.getJSONObject(17).put("value", "on");
+        DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
+        DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
+        DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
+        DataBuffer.data.getJSONObject(17).put("change_rate", "0");
         DataBuffer.data.getJSONObject(18).put("value", "on");
         DataBuffer.data.getJSONObject(19).put("value", "off");
         DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
@@ -384,6 +437,9 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(23).put("value", "on");
         DataBuffer.data.getJSONObject(24).put("value", "on");
         DataBuffer.data.getJSONObject(25).put("value", "OK");
+        DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
+        DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
+        DataBuffer.data.getJSONObject(27).put("value", "off");
         setFaultValue();
         JSONObject sendData = new JSONObject();
         sendData.put("components", DataBuffer.data);
@@ -404,6 +460,12 @@ public class FunctionController {
         gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
         gui.setAirState(false);
         gui.setAirFlowRate(0.0);
+
+        gui.setUltraSensor117(checkUltrasonicSensorState(9));
+        gui.setUltraSensor114(checkUltrasonicSensorState(10));
+        gui.setUltraSensor111(checkUltrasonicSensorState(16));
+        gui.setUltraSensor112(checkUltrasonicSensorState(17));
+        gui.setUltraSensor113(checkUltrasonicSensorState(18));
         if (((System.currentTimeMillis()) - starttime) > 500) {
             calcChangeRate(System.currentTimeMillis() - starttime);
             DataBuffer.data.getJSONObject(0).put("value", "on");
@@ -416,8 +478,10 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(6).put("value", "on");
             DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
             DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
-            DataBuffer.data.getJSONObject(8).put("value", "off");
-            DataBuffer.data.getJSONObject(9).put("value", "off");
+            DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+            DataBuffer.data.getJSONObject(8).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+            DataBuffer.data.getJSONObject(9).put("change_rate", "0");
             DataBuffer.data.getJSONObject(10).put("value", "on");
             DataBuffer.data.getJSONObject(11).put("value", "off");
             DataBuffer.data.getJSONObject(12).put("value", "off");
@@ -425,9 +489,12 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
             DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
             DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
-            DataBuffer.data.getJSONObject(15).put("value", "off");
-            DataBuffer.data.getJSONObject(16).put("value", "off");
-            DataBuffer.data.getJSONObject(17).put("value", "on");
+            DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
+            DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
+            DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
+            DataBuffer.data.getJSONObject(17).put("change_rate", "0");
             DataBuffer.data.getJSONObject(18).put("value", "on");
             DataBuffer.data.getJSONObject(19).put("value", "off");
             DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
@@ -438,6 +505,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(23).put("value", "on");
             DataBuffer.data.getJSONObject(24).put("value", "on");
             DataBuffer.data.getJSONObject(25).put("value", "OK");
+            DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
+            DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
+            DataBuffer.data.getJSONObject(27).put("value", "off");
             setFaultValue();
             JSONObject sendData = new JSONObject();
             sendData.put("components", DataBuffer.data);
@@ -460,6 +530,12 @@ public class FunctionController {
         gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
         gui.setAirState(false);
         gui.setAirFlowRate(0.0);
+
+        gui.setUltraSensor117(checkUltrasonicSensorState(9));
+        gui.setUltraSensor114(checkUltrasonicSensorState(10));
+        gui.setUltraSensor111(checkUltrasonicSensorState(16));
+        gui.setUltraSensor112(checkUltrasonicSensorState(17));
+        gui.setUltraSensor113(checkUltrasonicSensorState(18));
         calcChangeRate(System.currentTimeMillis() - starttime);
         DataBuffer.data.getJSONObject(0).put("value", "on");
         DataBuffer.data.getJSONObject(1).put("value", "off");
@@ -471,8 +547,10 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(6).put("value", "on");
         DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
         DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
-        DataBuffer.data.getJSONObject(8).put("value", "on");
-        DataBuffer.data.getJSONObject(9).put("value", "off");
+        DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+        DataBuffer.data.getJSONObject(8).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+        DataBuffer.data.getJSONObject(9).put("change_rate", "0");
         DataBuffer.data.getJSONObject(10).put("value", "on");
         DataBuffer.data.getJSONObject(11).put("value", "off");
         DataBuffer.data.getJSONObject(12).put("value", "off");
@@ -480,9 +558,12 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
         DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
         DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
-        DataBuffer.data.getJSONObject(15).put("value", "on");
-        DataBuffer.data.getJSONObject(16).put("value", "off");
-        DataBuffer.data.getJSONObject(17).put("value", "on");
+        DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
+        DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
+        DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
+        DataBuffer.data.getJSONObject(17).put("change_rate", "0");
         DataBuffer.data.getJSONObject(18).put("value", "on");
         DataBuffer.data.getJSONObject(19).put("value", "off");
         DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
@@ -493,6 +574,9 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(23).put("value", "on");
         DataBuffer.data.getJSONObject(24).put("value", "on");
         DataBuffer.data.getJSONObject(25).put("value", "OK");
+        DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
+        DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
+        DataBuffer.data.getJSONObject(27).put("value", "off");
         setFaultValue();
         JSONObject sendData = new JSONObject();
         sendData.put("components", DataBuffer.data);
@@ -528,6 +612,12 @@ public class FunctionController {
         gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
         gui.setAirState(false);
         gui.setAirFlowRate(0.0);
+
+        gui.setUltraSensor117(checkUltrasonicSensorState(9));
+        gui.setUltraSensor114(checkUltrasonicSensorState(10));
+        gui.setUltraSensor111(checkUltrasonicSensorState(16));
+        gui.setUltraSensor112(checkUltrasonicSensorState(17));
+        gui.setUltraSensor113(checkUltrasonicSensorState(18));
         if (((System.currentTimeMillis()) - starttime) > 500) {
             calcChangeRate(System.currentTimeMillis() - starttime);
             DataBuffer.data.getJSONObject(0).put("value", "on");
@@ -540,8 +630,10 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(6).put("value", "on");
             DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
             DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
-            DataBuffer.data.getJSONObject(8).put("value", "off");
-            DataBuffer.data.getJSONObject(9).put("value", "off");
+            DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+            DataBuffer.data.getJSONObject(8).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+            DataBuffer.data.getJSONObject(9).put("change_rate", "0");
             DataBuffer.data.getJSONObject(10).put("value", "on");
             DataBuffer.data.getJSONObject(11).put("value", "on");
             DataBuffer.data.getJSONObject(12).put("value", "on");
@@ -549,9 +641,12 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
             DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
             DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
-            DataBuffer.data.getJSONObject(15).put("value", "off");
-            DataBuffer.data.getJSONObject(16).put("value", "off");
-            DataBuffer.data.getJSONObject(17).put("value", "on");
+            DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
+            DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
+            DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+            DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
+            DataBuffer.data.getJSONObject(17).put("change_rate", "0");
             DataBuffer.data.getJSONObject(18).put("value", "on");
             DataBuffer.data.getJSONObject(19).put("value", "off");
             DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
@@ -562,6 +657,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(23).put("value", "on");
             DataBuffer.data.getJSONObject(24).put("value", "on");
             DataBuffer.data.getJSONObject(25).put("value", "OK");
+            DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
+            DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
+            DataBuffer.data.getJSONObject(27).put("value", "off");
             setFaultValue();
             JSONObject sendData = new JSONObject();
             sendData.put("components", DataBuffer.data);
@@ -586,6 +684,12 @@ public class FunctionController {
         gui.setShowWaterLevel1((double) Math.round(gui.getTankLevel() * 100) / 100);
         gui.setShowWaterLevel2((double) Math.round(gui.getWaterLevel() * 100) / 100);
         gui.setShowWaterTemp((double) Math.round((gui.getTemperature() * 10)) / 10);
+
+        gui.setUltraSensor117(checkUltrasonicSensorState(9));
+        gui.setUltraSensor114(checkUltrasonicSensorState(10));
+        gui.setUltraSensor111(checkUltrasonicSensorState(16));
+        gui.setUltraSensor112(checkUltrasonicSensorState(17));
+        gui.setUltraSensor113(checkUltrasonicSensorState(18));
         calcChangeRate(System.currentTimeMillis() - starttime);
         DataBuffer.data.getJSONObject(0).put("value", "on");
         DataBuffer.data.getJSONObject(1).put("value", "off");
@@ -597,8 +701,10 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(6).put("value", "on");
         DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
         DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
-        DataBuffer.data.getJSONObject(8).put("value", "on");
-        DataBuffer.data.getJSONObject(9).put("value", "off");
+        DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+        DataBuffer.data.getJSONObject(8).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+        DataBuffer.data.getJSONObject(9).put("change_rate", "0");
         DataBuffer.data.getJSONObject(10).put("value", "off");
         DataBuffer.data.getJSONObject(11).put("value", "off");
         DataBuffer.data.getJSONObject(12).put("value", "off");
@@ -606,9 +712,12 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(13).put("change_rate", String.valueOf(changeRateWaterPressure));
         DataBuffer.data.getJSONObject(14).put("value", String.valueOf(gui.getWaterFlow()));
         DataBuffer.data.getJSONObject(14).put("change_rate", String.valueOf(changeRateWaterFlow));
-        DataBuffer.data.getJSONObject(15).put("value", "off");
-        DataBuffer.data.getJSONObject(16).put("value", "on");
-        DataBuffer.data.getJSONObject(17).put("value", "on");
+        DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
+        DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
+        DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+        DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
+        DataBuffer.data.getJSONObject(17).put("change_rate", "0");
         DataBuffer.data.getJSONObject(18).put("value", "on");
         DataBuffer.data.getJSONObject(19).put("value", "off");
         DataBuffer.data.getJSONObject(20).put("value", String.valueOf(gui.getAirFlow()));
@@ -619,6 +728,9 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(23).put("value", "on");
         DataBuffer.data.getJSONObject(24).put("value", "on");
         DataBuffer.data.getJSONObject(25).put("value", "OK");
+        DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
+        DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
+        DataBuffer.data.getJSONObject(27).put("value", "off");
         setFaultValue();
         JSONObject sendData = new JSONObject();
         sendData.put("components", DataBuffer.data);
@@ -786,10 +898,12 @@ public class FunctionController {
                     DataBuffer.data.getJSONObject(7).put("change_rate", "0.0");
                     break;
                 case 9:
-                    DataBuffer.data.getJSONObject(8).put("value", "off");
+                    DataBuffer.data.getJSONObject(8).put("value", checkUltrasonicSensorState(9));
+                    DataBuffer.data.getJSONObject(8).put("change_rate", "0");
                     break;
                 case 10:
-                    DataBuffer.data.getJSONObject(9).put("value", "off");
+                    DataBuffer.data.getJSONObject(9).put("value", checkUltrasonicSensorState(10));
+                    DataBuffer.data.getJSONObject(9).put("change_rate", "0");
                     break;
                 case 11:
                     DataBuffer.data.getJSONObject(10).put("value", "off");
@@ -809,13 +923,16 @@ public class FunctionController {
                     DataBuffer.data.getJSONObject(14).put("change_rate", "0.0");
                     break;
                 case 16:
-                    DataBuffer.data.getJSONObject(15).put("value", "off");
+                    DataBuffer.data.getJSONObject(15).put("change_rate", "0");
+                    DataBuffer.data.getJSONObject(15).put("value", checkUltrasonicSensorState(16));
                     break;
                 case 17:
-                    DataBuffer.data.getJSONObject(16).put("value", "off");
+                    DataBuffer.data.getJSONObject(16).put("change_rate", "0");
+                    DataBuffer.data.getJSONObject(16).put("value", checkUltrasonicSensorState(17));
                     break;
                 case 18:
-                    DataBuffer.data.getJSONObject(17).put("value", "off");
+                    DataBuffer.data.getJSONObject(17).put("change_rate", "0");
+                    DataBuffer.data.getJSONObject(17).put("value", checkUltrasonicSensorState(18));
                     break;
                 case 19:
                     DataBuffer.data.getJSONObject(18).put("value", "off");
@@ -847,9 +964,50 @@ public class FunctionController {
                     break;
             }
         }
-
     }
 
-    
+    private int checkUltrasonicSensorState(int ComponentID) {
+        int state = 0;
+        switch (ComponentID) {
+            case 9:
+                if (gui.getWaterLevel() * 10 < 5) {
+                    state = 0;
+                } else {
+                    state = 1;
+                }
+                break;
+            case 10:
+                if (gui.getWaterLevel() * 10 < 9) {
+                    state = 0;
+                } else {
+                    state = 1;
+                }
+                break;
+            case 16:
+                if (gui.getTankLevel() * 10 < 9) {
+                    state = 0;
+                } else {
+                    state = 1;
+                }
+                break;
+            case 17:
+                if (gui.getTankLevel() * 10 < 5) {
+                    state = 0;
+                } else {
+                    state = 1;
+                }
+                break;
+            case 18:
+                if (gui.getWaterLevel() * 10 < 1) {
+                    state = 0;
+                } else {
+                    state = 1;
+                }
+                break;
+            default:
+                break;
+        }
+        return state;
+    }
 
 }

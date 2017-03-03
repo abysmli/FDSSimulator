@@ -206,13 +206,13 @@ public class MenuGui extends JPanel {
             simulatorCenterController.Reset();
         });
         this.Task1Button.addActionListener((ActionEvent e) -> {
-            simulatorCenterController.HeatWater35();
+            simulatorCenterController.AutoCycl30();
         });
         this.Task2Button.addActionListener((ActionEvent e) -> {
-            simulatorCenterController.HeatWater75();
+            simulatorCenterController.PourWater5L();
         });
         this.Task3Button.addActionListener((ActionEvent e) -> {
-            simulatorCenterController.HeatWater55();
+            simulatorCenterController.HeatWater3L45();
         });
         this.Task4Button.addActionListener((ActionEvent e) -> {
             simulatorCenterController.Clean();

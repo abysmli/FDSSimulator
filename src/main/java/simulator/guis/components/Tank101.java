@@ -44,7 +44,7 @@ public class Tank101 extends SimulationComponent {
         if (stripe) {
             g.fillRect(1, this.getInputY() - this.getPipeRadius() - this.getYCoordinate(), 5, this.getHeightComponent() - this.getInputY() + this.getPipeRadius() + this.getYCoordinate());
         }
-        
+
         if (stripeReplace) {
             g.fillRect(1, this.getInputY() - this.getPipeRadius() - this.getYCoordinate() + 100, 5, this.getHeightComponent() - this.getInputY() + this.getPipeRadius() + this.getYCoordinate() - 100);
         }
@@ -55,7 +55,7 @@ public class Tank101 extends SimulationComponent {
         g.drawString(name, (int) (this.getWidthComponent() / 2 - g.getFontMetrics().stringWidth(this.name) / 2), 11);
 
         // water level
-        String waterLevelDisplay = String.valueOf(Math.round(this.level * 10.0)) + " L";
+        String waterLevelDisplay = String.valueOf((double) Math.round(this.level * 100.0) / 10.0) + " L";
         g.drawString(waterLevelDisplay, (int) (this.getWidthComponent() / 2 - g.getFontMetrics().stringWidth(waterLevelDisplay) / 2), 50);
 
     }

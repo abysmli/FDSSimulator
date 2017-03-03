@@ -38,8 +38,8 @@ public class WatchListGUI {
         pane.add(SeriesLabel);
         pane.add(ValueLabel);
         pane.add(DefektLabel);
-        for (int i = 0; i < DataBuffer.data.length(); i++) {
-            JSONObject obj = DataBuffer.data.getJSONObject(i);
+        for (int i = 0; i < DataBuffer.initData.length(); i++) {
+            JSONObject obj = DataBuffer.initData.getJSONObject(i);
             JLabel componentID = new JLabel(String.valueOf(obj.getInt("component_id")), SwingConstants.CENTER);
             componentID.setFont(new Font("Ubuntu", 0, 14));
             JLabel componentName = new JLabel(obj.getString("component_name"));
@@ -65,7 +65,6 @@ public class WatchListGUI {
         for (int i = 0; i < DataBuffer.data.length(); i++) {
             JSONObject obj = DataBuffer.data.getJSONObject(i);
             if (obj.getString("type").equals("sensor")) {
-
                 valueLabels.get(i)
                         .setText((new BigDecimal(Double.valueOf(obj.getString("value")))
                                 .setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue()) + " | (change rate: "

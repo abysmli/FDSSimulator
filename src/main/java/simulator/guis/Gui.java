@@ -29,7 +29,10 @@ import simulator.guis.components.UpperPipe;
 import simulator.guis.components.Valve;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import simulator.guis.components.MC;
+import simulator.guis.components.Switcher;
 import simulator.guis.components.Tank102;
+import simulator.guis.components.UltrasonicSensor;
 import simulator.guis.components.UpperReplacePipe;
 import simulator.guis.components.Valve113;
 
@@ -61,12 +64,18 @@ public class Gui extends JPanel {
     private final SimulationComponent airflowmeter;
     private final SimulationComponent airpressuremeter;
     private final SimulationComponent upperReplacePipe;
-    
+
+    private final SimulationComponent switch111;
+    private final SimulationComponent switch112;
+    private final SimulationComponent switch113;
+    private final SimulationComponent switch114;
+    private final SimulationComponent switch117;
+    private final SimulationComponent ultrasonic;
+    private final SimulationComponent mc;
+
     private final JLabel processLabel;
 
     private final SimulatorCenterController simulatorCenterController;
-    
-    
 
     public Gui(SimulatorCenterController simulatorCenterController) {
         this.simulatorCenterController = simulatorCenterController;
@@ -122,20 +131,41 @@ public class Gui extends JPanel {
 
         this.valve112 = new ManualValve(300, 342, 60, 100, 0.07, ((Tank102) tank102).getPipeWidth(), "Valve 112");
         this.valve112.setToolTipText("Manual Valve 112, Ventil, V112, ID: 25");
-        
-        this.valve113 = new Valve113(448, 442, 60, 100, 0.07, ((Tank102) tank102).getPipeWidth(), "Valve 113");
-        this.valve113.setToolTipText("Digital Valve 113, Ventil, V113, ID: 26");
 
-        this.temperatureDisplay = new TemperatureDisplay(680, 490, 60, 30, 0.07);
-        this.temperatureDisplay.setToolTipText("Temperature Display");
-        
-        this.temperatureDisplay2 = new TemperatureDisplay(680, 340, 60, 30, 0.07);
-        this.temperatureDisplay2.setToolTipText("Temperature Display 2");
-        
+        this.valve113 = new Valve113(448, 442, 60, 100, 0.07, ((Tank102) tank102).getPipeWidth(), "Valve 113");
+        this.valve113.setToolTipText("Digital Valve 113, Ventil, V113, ID: 28");
+
+        this.temperatureDisplay = new TemperatureDisplay(610, 420, 60, 30, 0.07);
+        this.temperatureDisplay.setToolTipText("Temperature Display, B104, ID: 3");
+
+        this.temperatureDisplay2 = new TemperatureDisplay(610, 380, 60, 30, 0.07);
+        this.temperatureDisplay2.setToolTipText("Temperature Display 2, B105, ID: 27");
+
         this.upperPipe = new UpperPipe((Tank102) this.tank102, (Tank101) this.tank101, (Valve) this.valve102);
         this.upperReplacePipe = new UpperReplacePipe((Tank102) this.tank102, (Tank101) this.tank101, (Valve) this.valve102);
         this.lowerPipe = new LowerPipe((Tank102) this.tank102, (Tank101) this.tank101);
         this.airPipe = new AirPipe((Valve) this.valve102, (AirPump) this.airpump);
+
+        this.switch114 = new Switcher(700, 370, 50, 15, 0.07);
+        this.switch114.setToolTipText("Maximum Fill Level sensor of Tank 101, B114, ID: 10");
+
+        this.switch117 = new Switcher(700, 435, 50, 15, 0.07);
+        this.switch117.setToolTipText("Medium Fill Level sensor of Tank 101, S117, ID: 9");
+
+        this.switch113 = new Switcher(700, 500, 50, 15, 0.07);
+        this.switch113.setToolTipText("Minimum Fill Level sensor of Tank 101, B113, ID: 18");
+
+        this.switch111 = new Switcher(200, 140, 50, 15, 0.07);
+        this.switch111.setToolTipText("Maximum Fill Level sensor of Tank 102, S111, ID: 16");
+
+        this.switch112 = new Switcher(200, 205, 50, 15, 0.07);
+        this.switch112.setToolTipText("Medium Fill Level sensor of Tank 102, S112, ID: 17");
+
+        this.ultrasonic = new UltrasonicSensor(600, 332, 15, 20, 0.07);
+        this.ultrasonic.setToolTipText("Ultrasonic Sensor of Tank 101, B101, ID: 8");
+
+        this.mc = new MC(600, 720, 150, 40, 0.07);
+        this.mc.setToolTipText("Microcontroller, MC, ID: 1");
     }
 
     public void init() {
@@ -165,19 +195,73 @@ public class Gui extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                simulatorCenterController.openAddFaultGUIBySeries("E104");
+                simulatorCenterController.openAddFaultGUIBySeries("B104");
             }
         });
         add(this.temperatureDisplay);
-        
+
         this.temperatureDisplay2.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                simulatorCenterController.openAddFaultGUIBySeries("E105");
+                simulatorCenterController.openAddFaultGUIBySeries("B105");
             }
         });
         add(this.temperatureDisplay2);
+
+        this.switch111.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("S111");
+            }
+        });
+        add(this.switch111);
+
+        this.switch112.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("S112");
+            }
+        });
+        add(this.switch112);
+
+        this.switch113.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("B113");
+            }
+        });
+        add(this.switch113);
+
+        this.switch114.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("B114");
+            }
+        });
+        add(this.switch114);
+
+        this.switch117.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("S117");
+            }
+        });
+        add(this.switch117);
+
+        this.ultrasonic.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("B101");
+            }
+        });
+        add(this.ultrasonic);
 
         this.tank102.addMouseListener(new MouseAdapter() {
             @Override
@@ -206,7 +290,7 @@ public class Gui extends JPanel {
             }
         });
         add(this.valve112);
-        
+
         // V113
         this.valve113.addMouseListener(new MouseAdapter() {
             @Override
@@ -217,7 +301,7 @@ public class Gui extends JPanel {
         });
         add(this.valve113);
         setValveStateV113(false);
-        
+
         // Valve 102
         this.valve102.addMouseListener(new MouseAdapter() {
             @Override
@@ -311,11 +395,6 @@ public class Gui extends JPanel {
         });
         add(this.proportionalValve);
 
-        add(this.upperPipe);
-        add(this.upperReplacePipe);
-        add(this.lowerPipe);
-        add(this.processLabel);
-
         this.airpump.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -324,7 +403,22 @@ public class Gui extends JPanel {
             }
         });
         add(this.airpump);
+
+        this.mc.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                simulatorCenterController.openAddFaultGUIBySeries("MC");
+            }
+        });
+        add(this.mc);
+        
+        add(this.upperPipe);
+        add(this.upperReplacePipe);
+        add(this.lowerPipe);
+        add(this.processLabel);
         add(this.airPipe);
+
     }
 
     public void setSliderValue(double value) {
@@ -365,7 +459,7 @@ public class Gui extends JPanel {
     public void setValveStateID5(boolean state) {
         ((Valve) this.valve102).setValveState(state);
     }
-    
+
     public void setValveStateV113(boolean state) {
         ((Valve113) this.valve113).setValveState(state);
         ((UpperReplacePipe) this.upperReplacePipe).setLastPipeSectionBlue(state);
@@ -418,7 +512,7 @@ public class Gui extends JPanel {
     public void setTemperatureDisplay(double temperature) {
         ((TemperatureDisplay) this.temperatureDisplay).setTemperature(temperature);
     }
-    
+
     public void setTemperatureDisplay2(double temperature) {
         ((TemperatureDisplay) this.temperatureDisplay2).setTemperature(temperature);
     }
@@ -486,7 +580,7 @@ public class Gui extends JPanel {
     public boolean getManualValveState() {
         return ((ManualValve) this.valve112).getValveState();
     }
-    
+
     public boolean getValveStateV113() {
         return ((Valve113) this.valve113).getValveState();
     }
@@ -494,12 +588,32 @@ public class Gui extends JPanel {
     public double getTemperature() {
         return ((TemperatureDisplay) this.temperatureDisplay).getTemperature();
     }
-    
+
     public double getTemperature2() {
         return ((TemperatureDisplay) this.temperatureDisplay2).getTemperature();
     }
 
     public boolean getPumpState() {
         return ((Pump) this.pump).getPumpState();
+    }
+
+    public void setUltraSensor117(int checkUltrasonicSensorState) {
+        ((Switcher) this.switch117).setSwitcherState(checkUltrasonicSensorState);
+    }
+
+    public void setUltraSensor114(int checkUltrasonicSensorState) {
+        ((Switcher) this.switch114).setSwitcherState(checkUltrasonicSensorState);
+    }
+
+    public void setUltraSensor111(int checkUltrasonicSensorState) {
+        ((Switcher) this.switch111).setSwitcherState(checkUltrasonicSensorState);
+    }
+
+    public void setUltraSensor112(int checkUltrasonicSensorState) {
+        ((Switcher) this.switch112).setSwitcherState(checkUltrasonicSensorState);
+    }
+
+    public void setUltraSensor113(int checkUltrasonicSensorState) {
+        ((Switcher) this.switch113).setSwitcherState(checkUltrasonicSensorState);
     }
 }
