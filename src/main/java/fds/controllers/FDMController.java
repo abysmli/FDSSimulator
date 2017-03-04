@@ -43,19 +43,19 @@ public class FDMController {
         http.postComponentsValue(data);
     }
 
-    public void sendFault(String selectedseries, String faultType, String faultDesc) {
+    public void checkFault(String selectedseries, String faultType, String faultName, String faultEffect, String faultMessage, String EquipmentID) {
         try {
             if (!selectedseries.isEmpty()) {
                 simulatorCenterController.Stop();
-                JSONArray faultDatabase = databaseHandler.getFaults();
+                JSONArray faultDatabase = databaseHandler.getFaultKnowledge();
                 Boolean localFaultFlag = false;
                 for (int i = 0; i < faultDatabase.length(); i++) {
                     JSONObject faultObject = faultDatabase.getJSONObject(i);
-                    if (faultObject.getString("series") == selectedseries && faultObject.getString("fault_type") == faultType) {
+                    if (faultObject.getString("fault_location").equals(String.valueOf(this.findComponentBySeries(selectedseries).getInt("component_id")))) {
                         localFaultFlag = true;
                         JOptionPane.showMessageDialog(null,
-                                "Reconfiguration Strategy: Deactive Mainfunction and Reconfigure Tasklist "
-                                + faultObject.getJSONObject("execute_command").getJSONArray("mainfunction_ids")
+                                "Knownfault found!\nReconfiguration Strategy: Deactive Mainfunction and Reconfigure Tasklist "
+                                + faultObject.getJSONObject("reconf_command").getJSONArray("mainfunction_ids")
                                 .toString()
                                 + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
                                 "Response from Local Fault Diagnose Modul", JOptionPane.INFORMATION_MESSAGE);
@@ -65,35 +65,66 @@ public class FDMController {
                     }
                 }
                 if (!localFaultFlag) {
-                    if (faultType.equals("defect") || faultType.equals("shift")) {
-                        JOptionPane.showMessageDialog(null,
-                                "Fault of the Simulator detected by FDS\nComponent: " + selectedseries + "\nNow try to connect FDS Server to Reconfiguration Simulator...",
-                                "Auto Detected Fault", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,
+                            "Fault of the Simulator detected by FDS\nComponent: " + selectedseries + "\nNow try to connect FRS Server to Reconfiguration Simulator...",
+                            "Connecting to FRS Server...", JOptionPane.ERROR_MESSAGE);
+
+                    JSONObject componentObj = this.findComponentBySeries(selectedseries);
+                    int componentID = componentObj.getInt("component_id");
+                    String faultValue = new String("");
+
+                    switch (componentID) {
+                        case 2:
+                            if (faultType == "value") {
+                                faultValue = "110";
+                            } else if (faultType == "changerate") {
+                                faultValue = "5";
+                            } else {
+                                faultValue = "0";
+                            }
+                            break;
+                        case 3:
+                            if (faultType == "value") {
+                                faultValue = "110";
+                            } else if (faultType == "changerate") {
+                                faultValue = "5";
+                            } else {
+                                faultValue = "0";
+                            }
+                            break;
+                        case 8:
+                            if (faultType == "value") {
+                                faultValue = "15";
+                            } else if (faultType == "changerate") {
+                                faultValue = "5";
+                            } else {
+                                faultValue = "0";
+                            }
+                            break;
                     }
-                    for (int i = 0; i < DataBuffer.data.length(); i++) {
-                        JSONObject component = DataBuffer.data.getJSONObject(i);
-                        if (component.getString("series").equals(selectedseries)) {
-                            JSONObject faultObj = new JSONObject();
-                            int componentID = component.getInt("component_id");
-                            faultObj.put("component_id", componentID);
-                            faultObj.put("series", selectedseries);
-                            faultObj.put("fault_type", faultType);
-                            faultObj.put("fault_desc", faultDesc);
-                            simulatorCenterController.getWatchListGUI().setDefektComponent(componentID, true);
-                            JSONObject result = http.reportFault(faultObj);
-                            JOptionPane.showMessageDialog(null,
-                                    "Reconfiguration Strategy: Deactive Mainfunction "
-                                    + result.getJSONObject("execute_command").getJSONArray("mainfunction_ids")
-                                    .toString()
-                                    + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
-                                    "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);
-                            FDMGui.setSetStrategyButtonState(true);
-                            DataBuffer.faultData.put(faultObj);
-                            DataBuffer.strategy.put(result);
-                            result.put("series", selectedseries);
-                            databaseHandler.saveFault(result);
-                        }
-                    }
+
+                    JSONObject faultObj = new JSONObject();
+                    faultObj.put("fault_name", faultName);
+                    faultObj.put("fault_effect", faultEffect);
+                    faultObj.put("fault_location", String.valueOf(componentID));
+                    faultObj.put("fault_value", faultValue);
+                    faultObj.put("fault_message", faultMessage);
+                    faultObj.put("equipment_id", EquipmentID);
+                    faultObj.put("fault_type", faultType);
+                    simulatorCenterController.getWatchListGUI().setDefektComponent(componentID, true);
+
+                    JSONObject result = sendFault(faultObj);
+
+//                    JOptionPane.showMessageDialog(null,
+//                            "Reconfiguration Strategy: Deactive Mainfunction "
+//                            + result.getJSONObject("reconf_command").getJSONArray("mainfunction_ids")
+//                            .toString()
+//                            + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
+//                            "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);
+                    FDMGui.setSetStrategyButtonState(true);
+                    DataBuffer.faultData.put(faultObj);
+                    DataBuffer.strategy.put(result);
+                    databaseHandler.saveFault(result);
                 }
             }
         } catch (Exception e) {
@@ -104,10 +135,24 @@ public class FDMController {
         }
     }
 
+    private JSONObject sendFault(JSONObject faultObj) throws Exception {
+        return http.reportFault(faultObj);
+    }
+
     public void executeStrategy() {
         SwingUtilities.invokeLater(() -> {
             simulatorCenterController.executeStrategy();
         });
+    }
+
+    public JSONObject findComponentBySeries(String selectedseries) {
+        JSONObject component = new JSONObject();
+        for (int i = 0; i < DataBuffer.data.length(); i++) {
+            if (DataBuffer.data.getJSONObject(i).getString("series").equals(selectedseries)) {
+                component = DataBuffer.data.getJSONObject(i);
+            }
+        }
+        return component;
     }
 
 }
