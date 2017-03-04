@@ -7,7 +7,7 @@ package fds.controllers;
 
 import simulator.controllers.SimulatorCenterController;
 import simulator.utils.DataBuffer;
-import fds.FDSHttpRequestHandler;
+import simulator.utils.FDSHttpRequestHandler;
 import fds.FDMGUI;
 import fds.model.DatabaseHandler;
 import javafx.application.Platform;

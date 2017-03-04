@@ -49,7 +49,7 @@ public class DatabaseHandler {
     
     public JSONArray getComponents() throws SQLException, NamingException {
         this.initConnections();
-        ResultSet result = stmt.executeQuery("SELECT * FROM ComponentTable");
+        ResultSet result = stmt.executeQuery("SELECT * FROM component_table");
         JSONArray jsonarray = new JSONArray();
         while (result.next()) {
             JSONObject obj = new JSONObject();

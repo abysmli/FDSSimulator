@@ -13,7 +13,7 @@ import simulator.guis.MenuGui;
 import simulator.guis.WatchListGUI;
 import simulator.utils.DataBuffer;
 import simulator.utils.ErrorLogger;
-import fds.FDSHttpRequestHandler;
+import simulator.utils.FDSHttpRequestHandler;
 import simulator.utils.SimulatorSetting;
 import fds.FDMGUI;
 import fds.controllers.FDMController;
