@@ -92,14 +92,14 @@ public class MenuGui extends JPanel {
         Task1Button.setToolTipText("Automatic Cycling in order heat 30°C Water");
         add(Task1Button);
 
-        Task2Button = new JButton("3L 45°C Water");
+        Task2Button = new JButton("5L Water");
         Task2Button.setBounds(162, 210, 128, 37);
-        Task2Button.setToolTipText("Heat 3L, 45°C Water in Tank 101");
+        Task2Button.setToolTipText("Pour 5L Water in Tank 101");
         add(Task2Button);
 
-        Task3Button = new JButton("5L Water");
+        Task3Button = new JButton("3L 45°C Water");
         Task3Button.setBounds(16, 260, 128, 37);
-        Task3Button.setToolTipText("Pour 5L Water in Tank 101");
+        Task3Button.setToolTipText("Heat 3L, 45°C Water in Tank 101");
         add(Task3Button);
 
         Task4Button = new JButton("Clean Pipe");

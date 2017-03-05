@@ -116,9 +116,10 @@ public class SimulatorCenterController {
         JSONObject sendData = new JSONObject();
         sendData.put("components", DataBuffer.data);
         sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-        sendData.put("process_id", new Integer(0));
+        sendData.put("task_id", new Integer(0));
+        sendData.put("function_id", new Integer(0));
         try {
-            http.postComponentsValue(sendData);
+            http.postRuntimeData(sendData);
         } catch (Exception e) {
             ErrorLogger.log(e, "Error Exception", e.getMessage(), ErrorLogger.ERROR_MESSAGE);
         }
@@ -134,9 +135,10 @@ public class SimulatorCenterController {
         JSONObject sendData = new JSONObject();
         sendData.put("components", DataBuffer.data);
         sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-        sendData.put("process_id", new Integer(0));
+        sendData.put("task_id", new Integer(0));
+        sendData.put("function_id", new Integer(0));
         try {
-            http.postComponentsValue(sendData);
+            http.postRuntimeData(sendData);
         } catch (Exception e) {
             ErrorLogger.log(e, "Error Exception", e.getMessage(), ErrorLogger.ERROR_MESSAGE);
         }

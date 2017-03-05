@@ -21,9 +21,17 @@ public class AddFaultGUI {
 
     JFrame AddFaultGUI = new JFrame("Add Fault");
     String selectedseries = "";
-    String faultType = "known";
+    String faultType = "value";
+    String faultParam = "temperatur";
     JLabel ComponentInfo = new JLabel();
-    JTextField shiftValueTextField = new JTextField();
+//    JLabel FaultName = new JLabel("Fault Name:");
+//    JLabel FaultEffect = new JLabel("Fault Effect:");
+    JLabel FaultLocation = new JLabel("Fault Location:");
+    JLabel EquipmentID = new JLabel("Equipment ID:            a100111");
+    JLabel FaultValue = new JLabel("Fault Value:");
+//    JTextField FaultNameField = new JTextField();
+//    JTextField FaultEffectField = new JTextField();
+    JTextField FaultValueField = new JTextField();
 
     List<JButton> buttons = new ArrayList<>();
     SimulatorCenterController simulatorCenterController;
@@ -52,6 +60,7 @@ public class AddFaultGUI {
                 enableButtons();
                 ((JButton) e.getSource()).setEnabled(false);
                 ComponentInfo.setText(((JButton) e.getSource()).getToolTipText());
+                FaultLocation.setText("Fault Location:          " + selectedseries);
             });
             buttons.add(button);
             AddFaultGUI.getContentPane().add(button);
@@ -65,67 +74,123 @@ public class AddFaultGUI {
         ComponentInfo.setBounds(15, 340, 430, 200);
         AddFaultGUI.getContentPane().add(ComponentInfo);
 
-        JLabel OptionsTitle = new JLabel("Fault Type (Send to FRS Server directly.)");
-        OptionsTitle.setFont(new Font("Ubuntu", 0, 18));
-        OptionsTitle.setBounds(440, 320, 400, 30);
-        AddFaultGUI.getContentPane().add(OptionsTitle);
+        JLabel FaultBlockTitle = new JLabel("Fault Setting:");
+        FaultBlockTitle.setFont(new Font("Ubuntu", 0, 18));
+        FaultBlockTitle.setBounds(440, 320, 400, 30);
+        AddFaultGUI.getContentPane().add(FaultBlockTitle);
 
-        JRadioButton knownRadio = new JRadioButton("Known Fault");
-        JRadioButton unknownRadio = new JRadioButton("Unknown Fault");
-        JRadioButton defectRadio = new JRadioButton("Defect Fault");
-        JRadioButton shiftRadio = new JRadioButton("Shift Fault");
-        knownRadio.setBounds(440, 350, 150, 40);
-        knownRadio.setSelected(true);
-        knownRadio.addActionListener((ActionEvent e) -> {
-            faultType = "known";
-            shiftValueTextField.setEnabled(false);
-        });
-        unknownRadio.setBounds(600, 350, 150, 40);
-        unknownRadio.addActionListener((ActionEvent e) -> {
-            faultType = "unknown";
-            shiftValueTextField.setEnabled(false);
-        });
+//        FaultName.setFont(new Font("Ubuntu", 0, 15));
+//        FaultName.setBounds(440, 350, 150, 30);
+//        AddFaultGUI.getContentPane().add(FaultName);
+//        FaultNameField.setBounds(570, 350, 150, 27);
+//        AddFaultGUI.add(FaultNameField);
+//
+//        FaultEffect.setFont(new Font("Ubuntu", 0, 15));
+//        FaultEffect.setBounds(440, 380, 400, 30);
+//        AddFaultGUI.getContentPane().add(FaultEffect);
+//        FaultEffectField.setBounds(570, 380, 150, 27);
+//        AddFaultGUI.add(FaultEffectField);
+        FaultLocation.setFont(new Font("Ubuntu", 0, 15));
+        FaultLocation.setBounds(440, 350, 400, 30);
+        AddFaultGUI.getContentPane().add(FaultLocation);
 
-        JLabel OptionsSymptomTitle = new JLabel("Fault Type (Detected by Simulator FDS)");
-        OptionsSymptomTitle.setFont(new Font("Ubuntu", 0, 18));
-        OptionsSymptomTitle.setBounds(440, 420, 400, 30);
-        AddFaultGUI.getContentPane().add(OptionsSymptomTitle);
+        EquipmentID.setFont(new Font("Ubuntu", 0, 15));
+        EquipmentID.setBounds(440, 380, 400, 30);
+        AddFaultGUI.getContentPane().add(EquipmentID);
 
-        defectRadio.setBounds(440, 450, 150, 40);
-        defectRadio.addActionListener((ActionEvent e) -> {
-            faultType = "defect";
-            shiftValueTextField.setEnabled(false);
+        ButtonGroup valueGroup = new ButtonGroup();
+
+        JRadioButton valueRadio = new JRadioButton("Value Shift Fault");
+        JRadioButton shiftRadio = new JRadioButton("Changerate Fault");
+        JRadioButton defektRadio = new JRadioButton("Defekt Fault");
+        valueRadio.setBounds(440, 410, 150, 40);
+        valueRadio.setSelected(true);
+        valueRadio.addActionListener((ActionEvent e) -> {
+            faultType = "value";
+            FaultValueField.setEnabled(true);
         });
-        shiftRadio.setBounds(600, 450, 100, 40);
+        shiftRadio.setBounds(600, 410, 150, 40);
         shiftRadio.addActionListener((ActionEvent e) -> {
-            faultType = "shift";
-            shiftValueTextField.setEnabled(true);
+            faultType = "changerate";
+            FaultValueField.setEnabled(true);
         });
-        ButtonGroup bG = new ButtonGroup();
-        bG.add(knownRadio);
-        bG.add(unknownRadio);
-        bG.add(defectRadio);
-        bG.add(shiftRadio);
-        AddFaultGUI.add(knownRadio);
-        AddFaultGUI.add(unknownRadio);
-        AddFaultGUI.add(defectRadio);
-        AddFaultGUI.add(shiftRadio);
 
-        shiftValueTextField.setBounds(710, 450, 150, 40);
-        shiftValueTextField.setEnabled(false);
-        AddFaultGUI.add(shiftValueTextField);
+        defektRadio.setBounds(760, 410, 150, 40);
+        defektRadio.addActionListener((ActionEvent e) -> {
+            faultType = "defect";
+            FaultValueField.setEnabled(false);
+        });
 
+        valueGroup.add(valueRadio);
+        valueGroup.add(shiftRadio);
+        valueGroup.add(defektRadio);
+        AddFaultGUI.getContentPane().add(valueRadio);
+        AddFaultGUI.getContentPane().add(shiftRadio);
+        AddFaultGUI.getContentPane().add(defektRadio);
+
+        FaultValue.setFont(new Font("Ubuntu", 0, 15));
+        FaultValue.setBounds(440, 450, 400, 30);
+        AddFaultGUI.getContentPane().add(FaultValue);
+        FaultValueField.setBounds(570, 450, 150, 27);
+        AddFaultGUI.add(FaultValueField);
+        
+        ButtonGroup paramGroup = new ButtonGroup();
+        JRadioButton temperaturRadio = new JRadioButton("Temperatur");
+        JRadioButton airpressureRadio = new JRadioButton("Air Pressure");
+        JRadioButton airflowrateRadio = new JRadioButton("Air Flowrate");
+        JRadioButton waterlevelRadio = new JRadioButton("Water Level");
+        JRadioButton waterpressureRadio = new JRadioButton("Water Pressure");
+        JRadioButton waterflowrateRadio = new JRadioButton("Water Flowrate");
+        
+        temperaturRadio.setBounds(440, 480, 150, 40);
+        temperaturRadio.setSelected(true);
+        temperaturRadio.addActionListener((ActionEvent e) -> {
+            faultParam = "temperatur";
+        });
+        airpressureRadio.setBounds(600, 480, 150, 40);
+        airpressureRadio.addActionListener((ActionEvent e) -> {
+            faultParam = "airpressure";
+        });
+
+        airflowrateRadio.setBounds(760, 480, 150, 40);
+        airflowrateRadio.addActionListener((ActionEvent e) -> {
+            faultParam = "airflowrate";
+        });
+        
+        waterlevelRadio.setBounds(440, 510, 150, 40);
+        waterlevelRadio.addActionListener((ActionEvent e) -> {
+            faultParam = "waterlevel";
+        });
+        
+        waterpressureRadio.setBounds(600, 510, 150, 40);
+        waterpressureRadio.addActionListener((ActionEvent e) -> {
+            faultParam = "waterpressure";
+        });
+
+        waterflowrateRadio.setBounds(760, 510, 150, 40);
+        waterflowrateRadio.addActionListener((ActionEvent e) -> {
+            faultParam = "waterflowrate";
+        });
+        
+        paramGroup.add(temperaturRadio);
+        paramGroup.add(airpressureRadio);
+        paramGroup.add(airflowrateRadio);
+        paramGroup.add(waterlevelRadio);
+        paramGroup.add(waterpressureRadio);
+        paramGroup.add(waterflowrateRadio);
+        AddFaultGUI.getContentPane().add(temperaturRadio);
+        AddFaultGUI.getContentPane().add(airpressureRadio);
+        AddFaultGUI.getContentPane().add(airflowrateRadio);
+        AddFaultGUI.getContentPane().add(waterlevelRadio);
+        AddFaultGUI.getContentPane().add(waterpressureRadio);
+        AddFaultGUI.getContentPane().add(waterflowrateRadio);
+        
         JButton addFaultButton = new JButton("Add Fault");
         addFaultButton.setBounds(760, 550, 140, 40);
         addFaultButton.addActionListener((ActionEvent e) -> {
             AddFaultGUI.setVisible(false);
-            JSONObject fault = getFault();
-            if (faultType.equals("known") || faultType.equals("unknown")) {
-                simulatorCenterController.Stop();
-                simulatorCenterController.getFDMController().sendFault(selectedseries, faultType, "Manual added Fault.");
-            } else {
-                DataBuffer.localFaultData.put(fault);
-            }
+            simulatorCenterController.Stop();
+            simulatorCenterController.getFDMController().checkFault(selectedseries, faultType, FaultValueField.getText(), faultParam, "", "", "", "a100111");
         });
         AddFaultGUI.getContentPane().add(addFaultButton);
     }
@@ -154,26 +219,5 @@ public class AddFaultGUI {
 
     public boolean isVisible() {
         return AddFaultGUI.isVisible();
-    }
-
-    private JSONObject getFault() {
-        JSONObject faultObj = new JSONObject();
-        for (int i = 0; i < DataBuffer.data.length(); i++) {
-            JSONObject component = DataBuffer.data.getJSONObject(i);
-            if (component.getString("series").equals(selectedseries)) {
-                int componentID = component.getInt("component_id");
-                String shiftValue = "0.0";
-                if (!shiftValueTextField.getText().isEmpty()) {
-                    shiftValue = shiftValueTextField.getText();
-                }
-                faultObj.put("component_id", componentID);
-                faultObj.put("series", selectedseries);
-                faultObj.put("fault_type", faultType);
-                faultObj.put("shift_value", shiftValue);
-                faultObj.put("fault_desc", "Manual added Fault.");
-                break;
-            }
-        }
-        return faultObj;
     }
 }

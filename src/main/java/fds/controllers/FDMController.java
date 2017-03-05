@@ -36,14 +36,15 @@ public class FDMController {
 
     public void checkData(JSONObject data) throws Exception {
         JSONArray components = data.getJSONArray("components");
-        int process_id = data.getInt("process_id");
+        int function_id = data.getInt("function_id");
         Platform.runLater(() -> {
-            FDMGui.refresh(components, process_id);
+            FDMGui.refresh(components, function_id);
         });
-        http.postComponentsValue(data);
+        databaseHandler.updateRuntimeData(data);
+        http.postRuntimeData(data);
     }
 
-    public void checkFault(String selectedseries, String faultType, String faultName, String faultEffect, String faultMessage, String EquipmentID) {
+    public void checkFault(String selectedseries, String faultType, String faultValue, String faultParam, String faultName, String faultEffect, String faultMessage, String EquipmentID) {
         try {
             if (!selectedseries.isEmpty()) {
                 simulatorCenterController.Stop();
@@ -53,15 +54,16 @@ public class FDMController {
                     JSONObject faultObject = faultDatabase.getJSONObject(i);
                     if (faultObject.getString("fault_location").equals(String.valueOf(this.findComponentBySeries(selectedseries).getInt("component_id")))) {
                         localFaultFlag = true;
+                        JSONArray mCommand = (new JSONObject(faultObject.getString("reconf_command"))).getJSONArray("command");
                         JOptionPane.showMessageDialog(null,
-                                "Knownfault found!\nReconfiguration Strategy: Deactive Mainfunction and Reconfigure Tasklist "
-                                + faultObject.getJSONObject("reconf_command").getJSONArray("mainfunction_ids")
-                                .toString()
-                                + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
-                                "Response from Local Fault Diagnose Modul", JOptionPane.INFORMATION_MESSAGE);
+                                "Knownfault found!\nReconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
+                                + "\nMain Function Deactiv Comand: " + mCommand.getJSONObject(0).getString("main_function_command")
+                                + "\nSub Function Deactiv Comand: " + mCommand.getJSONObject(1).getString("sub_function_command")
+                                + "\nBasic Function Deactiv Comand: " + mCommand.getJSONObject(2).getString("basic_function_command"), "Response from Local Fault Diagnose Modul", JOptionPane.INFORMATION_MESSAGE);
                         FDMGui.setSetStrategyButtonState(true);
                         DataBuffer.faultData.put(faultObject);
                         DataBuffer.strategy.put(faultObject);
+                        break;
                     }
                 }
                 if (!localFaultFlag) {
@@ -71,59 +73,33 @@ public class FDMController {
 
                     JSONObject componentObj = this.findComponentBySeries(selectedseries);
                     int componentID = componentObj.getInt("component_id");
-                    String faultValue = new String("");
-
-                    switch (componentID) {
-                        case 2:
-                            if (faultType == "value") {
-                                faultValue = "110";
-                            } else if (faultType == "changerate") {
-                                faultValue = "5";
-                            } else {
-                                faultValue = "0";
-                            }
-                            break;
-                        case 3:
-                            if (faultType == "value") {
-                                faultValue = "110";
-                            } else if (faultType == "changerate") {
-                                faultValue = "5";
-                            } else {
-                                faultValue = "0";
-                            }
-                            break;
-                        case 8:
-                            if (faultType == "value") {
-                                faultValue = "15";
-                            } else if (faultType == "changerate") {
-                                faultValue = "5";
-                            } else {
-                                faultValue = "0";
-                            }
-                            break;
-                    }
 
                     JSONObject faultObj = new JSONObject();
                     faultObj.put("fault_name", faultName);
                     faultObj.put("fault_effect", faultEffect);
                     faultObj.put("fault_location", String.valueOf(componentID));
                     faultObj.put("fault_value", faultValue);
+                    faultObj.put("fault_parameter", faultParam);
                     faultObj.put("fault_message", faultMessage);
                     faultObj.put("equipment_id", EquipmentID);
                     faultObj.put("fault_type", faultType);
                     simulatorCenterController.getWatchListGUI().setDefektComponent(componentID, true);
 
                     JSONObject result = sendFault(faultObj);
+                    JSONArray mCommand = result.getJSONObject("reconf_command").getJSONArray("command");
 
-//                    JOptionPane.showMessageDialog(null,
-//                            "Reconfiguration Strategy: Deactive Mainfunction "
-//                            + result.getJSONObject("reconf_command").getJSONArray("mainfunction_ids")
-//                            .toString()
-//                            + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
-//                            "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);
+                    System.out.println(mCommand.toString());
+                    JOptionPane.showMessageDialog(null,
+                            "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
+                            + "\nMain Function Deactiv Comand: " + mCommand.getJSONObject(0).getString("main_function_command")
+                            + "\nSub Function Deactiv Comand: " + mCommand.getJSONObject(1).getString("sub_function_command")
+                            + "\nBasic Function Deactiv Comand: " + mCommand.getJSONObject(2).getString("basic_function_command")
+                            + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
+                            "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);
                     FDMGui.setSetStrategyButtonState(true);
                     DataBuffer.faultData.put(faultObj);
                     DataBuffer.strategy.put(result);
+
                     databaseHandler.saveFault(result);
                 }
             }

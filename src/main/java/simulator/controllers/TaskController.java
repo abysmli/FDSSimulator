@@ -129,19 +129,19 @@ public class TaskController extends FunctionController {
                     switch (taskList.get(0)) {
                         case 1:
                             AutomaticCycling();
-                            super.gui.setProcessLabelText("Current Task: Automatic Cycling 30°C");
+                            super.gui.setTaskLabelText("Current Task: Automatic Cycling 30°C");
                             break;
                         case 2:
                             Water3L45();
-                            super.gui.setProcessLabelText("Current Task: Heat 3L,45°C Water");
+                            super.gui.setTaskLabelText("Current Task: Heat 3L,45°C Water");
                             break;
                         case 3:
                             Water5L();
-                            super.gui.setProcessLabelText("Current Task: Pour 5L Water");
+                            super.gui.setTaskLabelText("Current Task: Pour 5L Water");
                             break;
                         case 4:
                             startClean();
-                            super.gui.setProcessLabelText("Current Task: Clean Pipe");
+                            super.gui.setTaskLabelText("Current Task: Clean Pipe");
                             break;
                         default:
                             break;
@@ -156,6 +156,7 @@ public class TaskController extends FunctionController {
 
     public void AutomaticCycling() {
         starttime = System.currentTimeMillis();
+        super.task_id = 1;
         super.sollWaterTemp = 30;
         FunctionNumber = 1;
         AllFunctionsTimer.start();
@@ -164,6 +165,7 @@ public class TaskController extends FunctionController {
 
     public void Water3L45() {
         starttime = System.currentTimeMillis();
+        super.task_id = 3;
         super.sollWaterTemp = 45;
         super.sollWaterLevel = 3;
         FunctionNumber = 1;
@@ -172,6 +174,7 @@ public class TaskController extends FunctionController {
 
     public void Water5L() {
         starttime = System.currentTimeMillis();
+        super.task_id = 2;
         super.sollWaterLevel = 5;
         FunctionNumber = 1;
         AllFunctionsTimer.start();
@@ -179,6 +182,7 @@ public class TaskController extends FunctionController {
 
     public void startClean() {
         starttime = System.currentTimeMillis();
+        super.task_id = 4;
         FunctionNumber = 1;
         CleanTaskTimer.start();
     }
@@ -202,6 +206,7 @@ public class TaskController extends FunctionController {
         AllFunctionsTimer.stop();
         CleanTaskTimer.stop();
         StartTimer.stop();
+        super.simulatorCenterController.buttonStatusChange(false);
         super.reset();
     }
 

@@ -75,7 +75,6 @@ public class LowerPipe extends SimulationComponent {
 
             for (int i = 0; i < numberOfBars; i++) {
                 if ((this.barCurrentPosition - (i * distanceBetweenBars) <= a) && (this.barCurrentPosition - (i * distanceBetweenBars) > 0)) {
-
                     g.fillRect(this.getWidthComponent() - this.upperTank.getPipeWidth() + 1,
                             this.getHeightComponent() - 3 * this.upperTank.getPipeWidth() + this.barCurrentPosition - (i * distanceBetweenBars),
                             this.upperTank.getPipeWidth() - 1, this.barWidth);

@@ -43,8 +43,8 @@ public class FDSHttpRequestHandler {
         httpContext.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
     }
 
-    public JSONObject postComponentsValue(JSONObject sendData) throws Exception {
-        String url = "http://" + sURL + "/postComponentsValue";
+    public JSONObject postRuntimeData(JSONObject sendData) throws Exception {
+        String url = "http://" + sURL + "/postRuntimeData";
         List<NameValuePair> urlParameters = new ArrayList<>();
         urlParameters.add(new BasicNameValuePair("component_data", sendData.toString()));
         StringBuilder content = sendPostRequest(url, urlParameters);

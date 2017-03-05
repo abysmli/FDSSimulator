@@ -29,6 +29,7 @@ import simulator.guis.components.UpperPipe;
 import simulator.guis.components.Valve;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.SwingConstants;
 import simulator.guis.components.MC;
 import simulator.guis.components.Switcher;
 import simulator.guis.components.Tank102;
@@ -73,15 +74,15 @@ public class Gui extends JPanel {
     private final SimulationComponent ultrasonic;
     private final SimulationComponent mc;
 
-    private final JLabel processLabel;
+    private final JLabel taskLabel;
 
     private final SimulatorCenterController simulatorCenterController;
 
     public Gui(SimulatorCenterController simulatorCenterController) {
         this.simulatorCenterController = simulatorCenterController;
 
-        this.processLabel = new JLabel("Function: stop");
-        this.processLabel.setBounds(550, 50, 200, 20);
+        this.taskLabel = new JLabel("Task: Stop", SwingConstants.CENTER);
+        this.taskLabel.setBounds(450, 50, 300, 20);
 
         this.heater = new Heater(610, 490, 30, 30, 0.07);
         this.heater.setToolTipText("Heizung, Actor, E104, ID: 2");
@@ -416,7 +417,7 @@ public class Gui extends JPanel {
         add(this.upperPipe);
         add(this.upperReplacePipe);
         add(this.lowerPipe);
-        add(this.processLabel);
+        add(this.taskLabel);
         add(this.airPipe);
 
     }
@@ -441,8 +442,8 @@ public class Gui extends JPanel {
         this.simulatorCenterController.getMenuGUI().setWaterTemp(temp);
     }
 
-    public void setProcessLabelText(String text) {
-        this.processLabel.setText(text);
+    public void setTaskLabelText(String text) {
+        this.taskLabel.setText(text);
     }
 
     public void setPumpState(boolean state) {

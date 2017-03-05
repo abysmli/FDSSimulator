@@ -34,6 +34,8 @@ public class FunctionController {
     protected double initAirPressure = 0.0;
     protected double sollAirPressure = 6.0;
 
+    protected int task_id = 0;
+
     private double oldTemperature, oldWaterLevel, oldWaterPressure, oldWaterFlow, oldAirPressure, oldAirFlow,
             changeRateTemperature, changeRateWaterLevel, changeRateWaterPressure, changeRateWaterFlow,
             changeRateAirPressure, changeRateAirFlow;
@@ -221,13 +223,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
             DataBuffer.data.getJSONObject(27).put("value", "off");
             setFaultValue();
-            JSONObject sendData = new JSONObject();
-            sendData.put("components", DataBuffer.data);
-            sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-            sendData.put("process_id", new Integer(1));
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
-            simulatorCenterController.getFDMController().checkData(sendData);
+            simulatorCenterController.getFDMController().checkData(generateSendData(1));
         }
         setFaultState();
     }
@@ -297,13 +295,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
             DataBuffer.data.getJSONObject(27).put("value", "off");
             setFaultValue();
-            JSONObject sendData = new JSONObject();
-            sendData.put("components", DataBuffer.data);
-            sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-            sendData.put("process_id", new Integer(2));
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
-            simulatorCenterController.getFDMController().checkData(sendData);
+            simulatorCenterController.getFDMController().checkData(generateSendData(2));
         }
         setFaultState();
     }
@@ -370,13 +364,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
             DataBuffer.data.getJSONObject(27).put("value", "on");
             setFaultValue();
-            JSONObject sendData = new JSONObject();
-            sendData.put("components", DataBuffer.data);
-            sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-            sendData.put("process_id", new Integer(2));
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
-            simulatorCenterController.getFDMController().checkData(sendData);
+            simulatorCenterController.getFDMController().checkData(generateSendData(2));
         }
         setFaultState();
     }
@@ -507,13 +497,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
             DataBuffer.data.getJSONObject(27).put("value", "off");
             setFaultValue();
-            JSONObject sendData = new JSONObject();
-            sendData.put("components", DataBuffer.data);
-            sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-            sendData.put("process_id", new Integer(3));
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
-            simulatorCenterController.getFDMController().checkData(sendData);
+            simulatorCenterController.getFDMController().checkData(generateSendData(3));
         }
         setFaultState();
     }
@@ -575,13 +561,9 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
         DataBuffer.data.getJSONObject(27).put("value", "off");
         setFaultValue();
-        JSONObject sendData = new JSONObject();
-        sendData.put("components", DataBuffer.data);
-        sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-        sendData.put("process_id", new Integer(3));
         starttime = System.currentTimeMillis();
         simulatorCenterController.getWatchListGUI().refresh();
-        simulatorCenterController.getFDMController().checkData(sendData);
+        simulatorCenterController.getFDMController().checkData(generateSendData(3));
         setFaultState();
     }
 
@@ -657,13 +639,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
             DataBuffer.data.getJSONObject(27).put("value", "off");
             setFaultValue();
-            JSONObject sendData = new JSONObject();
-            sendData.put("components", DataBuffer.data);
-            sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-            sendData.put("process_id", new Integer(4));
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
-            simulatorCenterController.getFDMController().checkData(sendData);
+            simulatorCenterController.getFDMController().checkData(generateSendData(4));
         }
         setFaultState();
     }
@@ -727,13 +705,9 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
         DataBuffer.data.getJSONObject(27).put("value", "off");
         setFaultValue();
-        JSONObject sendData = new JSONObject();
-        sendData.put("components", DataBuffer.data);
-        sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-        sendData.put("process_id", new Integer(4));
         starttime = System.currentTimeMillis();
         simulatorCenterController.getWatchListGUI().refresh();
-        simulatorCenterController.getFDMController().checkData(sendData);
+        simulatorCenterController.getFDMController().checkData(generateSendData(4));
         setFaultState();
     }
 
@@ -759,7 +733,7 @@ public class FunctionController {
         heatingTimer.stop();
         pumpingTimer.stop();
         airpumpingTimer.stop();
-        gui.setProcessLabelText("Stop");
+        gui.setTaskLabelText("Task: Stop");
         gui.setPumpState(false);
         gui.setValveState(false);
         gui.setValveStateV113(false);
@@ -1010,4 +984,12 @@ public class FunctionController {
         return state;
     }
 
+    private JSONObject generateSendData(int function_id) {
+        JSONObject sendData = new JSONObject();
+        sendData.put("components", DataBuffer.data);
+        sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
+        sendData.put("task_id", task_id);
+        sendData.put("function_id", function_id);
+        return sendData;
+    }
 }

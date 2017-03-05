@@ -1,2 +1,2 @@
 # FDSSimulator
-Simulator for a automation system
+Simulator for a two tank automatic system
