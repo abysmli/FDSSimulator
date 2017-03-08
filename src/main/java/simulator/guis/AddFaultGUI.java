@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import simulator.controllers.SimulatorCenterController;
 import simulator.utils.DataBuffer;
 import javax.swing.JTextField;
+import org.json.JSONArray;
 
 public class AddFaultGUI {
 
@@ -68,10 +69,10 @@ public class AddFaultGUI {
 
         JLabel ComponentInfoTitle = new JLabel("Component Info");
         ComponentInfoTitle.setFont(new Font("Ubuntu", 0, 18));
-        ComponentInfoTitle.setBounds(10, 320, 200, 30);
+        ComponentInfoTitle.setBounds(10, 350, 200, 30);
         AddFaultGUI.getContentPane().add(ComponentInfoTitle);
 
-        ComponentInfo.setBounds(15, 340, 430, 200);
+        ComponentInfo.setBounds(15, 370, 430, 200);
         AddFaultGUI.getContentPane().add(ComponentInfo);
 
         JLabel FaultBlockTitle = new JLabel("Fault Setting:");
@@ -190,7 +191,8 @@ public class AddFaultGUI {
         addFaultButton.addActionListener((ActionEvent e) -> {
             AddFaultGUI.setVisible(false);
             simulatorCenterController.Stop();
-            simulatorCenterController.getFDMController().checkFault(selectedseries, faultType, FaultValueField.getText(), faultParam, "", "", "", "a100111");
+            JSONArray mTaskList = simulatorCenterController.tasksList.getList();
+            simulatorCenterController.getFDMController().checkFault(selectedseries, faultType, FaultValueField.getText(), faultParam, "", "", "", "a100111", mTaskList);
         });
         AddFaultGUI.getContentPane().add(addFaultButton);
     }

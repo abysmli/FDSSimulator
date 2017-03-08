@@ -12,4 +12,5 @@ public class DataBuffer {
     public static JSONArray localFaultData = new JSONArray();
     public static JSONArray strategy = new JSONArray();
     public static List<Integer> deactivedFunction = new ArrayList<>();
+    public static JSONArray task = new JSONArray();
 }

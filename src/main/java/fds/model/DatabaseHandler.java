@@ -117,6 +117,25 @@ public class DatabaseHandler {
         this.releaseConnections();
     }
 
+    public JSONArray getTasks() throws SQLException, NamingException {
+        this.initConnections();
+        ResultSet result = stmt.executeQuery("SELECT * FROM task_table");
+        JSONArray jsonarray = new JSONArray();
+        while (result.next()) {
+            JSONObject obj = new JSONObject();
+            obj.put("task_id", result.getInt(1));
+            obj.put("task_name", result.getString(2));
+            obj.put("required_resource", result.getString(3));
+            obj.put("required_mainfunction", result.getString(4));
+            obj.put("insert_date", result.getTimestamp(5));
+            obj.put("update_date", result.getTimestamp(6));
+            jsonarray.put(obj);
+        }
+        result.close();
+        this.releaseConnections();
+        return jsonarray;
+    }
+    
     public void updateRuntimeData(JSONObject mResult) throws SQLException, NamingException {
         this.initConnections();
         stmt.executeUpdate(

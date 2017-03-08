@@ -44,7 +44,7 @@ public class FDMController {
         http.postRuntimeData(data);
     }
 
-    public void checkFault(String selectedseries, String faultType, String faultValue, String faultParam, String faultName, String faultEffect, String faultMessage, String EquipmentID) {
+    public void checkFault(String selectedseries, String faultType, String faultValue, String faultParam, String faultName, String faultEffect, String faultMessage, String EquipmentID, JSONArray TaskList) {
         try {
             if (!selectedseries.isEmpty()) {
                 simulatorCenterController.Stop();
@@ -57,6 +57,7 @@ public class FDMController {
                         JSONArray mCommand = (new JSONObject(faultObject.getString("reconf_command"))).getJSONArray("command");
                         JOptionPane.showMessageDialog(null,
                                 "Knownfault found!\nReconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
+                                + "\nFault ID: " + faultObject.getInt("fault_id")
                                 + "\nMain Function Deactiv Comand: " + mCommand.getJSONObject(0).getString("main_function_command")
                                 + "\nSub Function Deactiv Comand: " + mCommand.getJSONObject(1).getString("sub_function_command")
                                 + "\nBasic Function Deactiv Comand: " + mCommand.getJSONObject(2).getString("basic_function_command"), "Response from Local Fault Diagnose Modul", JOptionPane.INFORMATION_MESSAGE);
@@ -68,7 +69,10 @@ public class FDMController {
                 }
                 if (!localFaultFlag) {
                     JOptionPane.showMessageDialog(null,
-                            "Fault of the Simulator detected by FDS\nComponent: " + selectedseries + "\nNow try to connect FRS Server to Reconfiguration Simulator...",
+                            "Fault of the Simulator detected! Fault Infomration: "
+                            + "\nFault parameter: " + faultParam
+                            + "\nFault Value: " + faultValue
+                            + "\nNow try to connect FRS Server to Reconfiguration Simulator...",
                             "Connecting to FRS Server...", JOptionPane.ERROR_MESSAGE);
 
                     JSONObject componentObj = this.findComponentBySeries(selectedseries);
@@ -83,6 +87,7 @@ public class FDMController {
                     faultObj.put("fault_message", faultMessage);
                     faultObj.put("equipment_id", EquipmentID);
                     faultObj.put("fault_type", faultType);
+                    faultObj.put("task_list", TaskList);
                     simulatorCenterController.getWatchListGUI().setDefektComponent(componentID, true);
 
                     JSONObject result = sendFault(faultObj);

@@ -33,7 +33,7 @@ public class MenuGui extends JPanel {
 
     public void init() throws Exception {
         setBorder(new LineBorder(new Color(128, 128, 128)));
-        setBounds(1000, 0, 302, 800);
+        setBounds(1100, 0, 402, 800);
         setLayout(null);
 
         JLabel userInterfaceLabel = new JLabel("Monitor");

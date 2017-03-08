@@ -38,6 +38,7 @@ public class SimulatorCenterController {
         this.databaseHandler = new DatabaseHandler();
         DataBuffer.initData = databaseHandler.getComponents();
         DataBuffer.data = databaseHandler.getComponents();
+        DataBuffer.task = databaseHandler.getTasks();
         this.application = application;
         this.FDMGui = FDMGui;
 
@@ -46,7 +47,7 @@ public class SimulatorCenterController {
         gui = new Gui(this);
         gui.init();
         this.application.add(gui);
-        
+
         tasksList = new TasksList(this);
         tasksList.init();
         this.application.add(tasksList);
@@ -63,22 +64,22 @@ public class SimulatorCenterController {
     }
 
     public void AutoCycl30() {
-        tasksList.addTasks("Automatic Cycling 30°C");
+        tasksList.addTasks(getTask(1));
         taskController.taskList.add(1);
     }
 
     public void HeatWater3L45() {
-        tasksList.addTasks("Heat 3L,45°C Water");
+        tasksList.addTasks(getTask(2));
         taskController.taskList.add(2);
     }
 
     public void PourWater5L() {
-        tasksList.addTasks("Pour 5L Water");
+        tasksList.addTasks(getTask(3));
         taskController.taskList.add(3);
     }
 
     public void Clean() {
-        tasksList.addTasks("Clean Pipe");
+        tasksList.addTasks(getTask(4));
         taskController.taskList.add(4);
     }
 
@@ -86,7 +87,7 @@ public class SimulatorCenterController {
         taskController.startFillLowerTankProcess();
         buttonStatusChange(true);
     }
-    
+
     public void FillingReplaceProcess() {
         taskController.startFillReplaceLowerTankProcess();
         buttonStatusChange(true);
@@ -270,7 +271,7 @@ public class SimulatorCenterController {
     public void addFaultGUI() {
         addFaultGUI.setVisible(!addFaultGUI.isVisible());
     }
-    
+
     public void openAddFaultGUIBySeries(String series) {
         addFaultGUI.setVisible(series);
     }
@@ -305,5 +306,16 @@ public class SimulatorCenterController {
 
     public void clearTasks() {
         taskController.taskList.clear();
+    }
+
+    private JSONObject getTask(int index) {
+        JSONObject taskObj = new JSONObject();
+        for (int i = 0; i < DataBuffer.task.length(); i++) {
+            if (DataBuffer.task.getJSONObject(i).getInt("task_id") == index) {
+                taskObj = DataBuffer.task.getJSONObject(i);
+                taskObj.put("task_status", "normal");
+            }
+        }
+        return taskObj;
     }
 }

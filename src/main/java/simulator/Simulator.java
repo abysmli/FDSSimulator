@@ -23,8 +23,8 @@ public class Simulator extends JFrame {
 
     public void init() {
         setTitle("Remote Fault Handling and Reconfiguration System Simulator");
-        setBounds(0, 0, 1302, 800);
-        setSize(1302, 800);
+        setBounds(0, 0, 1402, 800);
+        setSize(1402, 800);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

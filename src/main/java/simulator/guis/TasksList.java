@@ -17,6 +17,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import simulator.controllers.SimulatorCenterController;
 
 /**
@@ -43,13 +45,13 @@ public class TasksList extends JPanel {
 
     public void init() throws Exception {
         setBorder(new LineBorder(new Color(128, 128, 128)));
-        setBounds(797, 0, 204, 800);
+        setBounds(797, 0, 304, 800);
         setLayout(null);
 
         JPanel taskpanel = new JPanel();
-        taskpanel.setBounds(0, 50, 200, 770);
+        taskpanel.setBounds(0, 50, 300, 690);
         taskpanel.setLayout(null);
-        String[] taskcolumn = {"Nr.", "Name"};
+        String[] taskcolumn = {"Nr.", "ID", "Task Name", "Status"};
         avtastlist = new DefaultTableModel();
         tasktable = new JTable();
         tasktable.setRowSelectionAllowed(true);
@@ -64,7 +66,7 @@ public class TasksList extends JPanel {
         model.clearSelection();
 
         JScrollPane taskscroll = new JScrollPane(tasktable);
-        taskscroll.setBounds(2, 2, 198, 690);
+        taskscroll.setBounds(2, 0, 299, 690);
         taskpanel.add(taskscroll);
 
         JButton clearbutton = new JButton("Remove Tasks");
@@ -79,14 +81,16 @@ public class TasksList extends JPanel {
         tasklabel.setFont(new Font("Ubuntu", 0, 20));
         tasklabel.setBounds(50, 10, 150, 20);
         tasktable.getColumnModel().getColumn(0).setPreferredWidth(30);
-        tasktable.getColumnModel().getColumn(1).setPreferredWidth(170);
+        tasktable.getColumnModel().getColumn(1).setPreferredWidth(30);
+        tasktable.getColumnModel().getColumn(2).setPreferredWidth(180);
+        tasktable.getColumnModel().getColumn(3).setPreferredWidth(80);
         add(tasklabel);
         add(clearbutton);
         add(taskpanel);
     }
 
-    public void addTasks(String sTask) {
-        avtastlist.addRow(new String[]{String.valueOf(avtastlist.getRowCount() + 1), sTask});
+    public void addTasks(JSONObject taskObj) {
+        avtastlist.addRow(new String[]{String.valueOf(avtastlist.getRowCount() + 1), String.valueOf(taskObj.getInt("task_id")), taskObj.getString("task_name"), taskObj.getString("task_status")});
     }
 
     public void removeTasks(int index) {
@@ -102,5 +106,18 @@ public class TasksList extends JPanel {
 
     public void disableTask(int TaskNo) {
         avtastlist.moveRow(TaskNo - 1, TaskNo - 1, avtastlist.getRowCount() - 1);
+    }
+
+    public JSONArray getList() {
+        JSONArray mTaskList = new JSONArray();
+        for (int i = 0; i < avtastlist.getRowCount(); i++) {
+            JSONObject taskObj=new JSONObject();
+            taskObj.put("task_nr", avtastlist.getValueAt(i, 0));
+            taskObj.put("task_id", avtastlist.getValueAt(i, 1));
+            taskObj.put("task_name", avtastlist.getValueAt(i, 2));
+            taskObj.put("task_status", avtastlist.getValueAt(i, 3));
+            mTaskList.put(taskObj);
+        }
+        return mTaskList;
     }
 }
