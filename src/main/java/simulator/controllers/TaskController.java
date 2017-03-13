@@ -56,7 +56,7 @@ public class TaskController extends FunctionController {
                         FunctionNumber = 4;
                         break;
                     case 4:
-                        if (gui.getTemperature() > sollWaterTemp && gui.getTemperature() < sollWaterTemp + 1) {
+                        if (gui.getTemperature() >= sollWaterTemp) {
                             FunctionNumber = 5;
                         } else {
                             HeatProcess();

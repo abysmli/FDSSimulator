@@ -182,14 +182,14 @@ public class FunctionController {
         gui.setUltraSensor113(checkUltrasonicSensorState(18));
         if (((System.currentTimeMillis()) - starttime) > 500) {
             calcChangeRate(System.currentTimeMillis() - starttime);
-            DataBuffer.data.getJSONObject(0).put("value", "on");
-            DataBuffer.data.getJSONObject(1).put("value", "off");
-            DataBuffer.data.getJSONObject(2).put("value", String.valueOf(gui.getTemperature()));
-            DataBuffer.data.getJSONObject(2).put("change_rate", String.valueOf(changeRateTemperature));
+            DataBuffer.data.getJSONObject(0).put("value", "on"); // Kontroller
+            DataBuffer.data.getJSONObject(1).put("value", "off"); // Heizung
+            DataBuffer.data.getJSONObject(2).put("value", String.valueOf(gui.getTemperature())); // Temperatur Sensor
+            DataBuffer.data.getJSONObject(2).put("change_rate", String.valueOf(changeRateTemperature)); // Temperatur Sensor
             DataBuffer.data.getJSONObject(3).put("value", "OK");
-            DataBuffer.data.getJSONObject(4).put("value", "off");
-            DataBuffer.data.getJSONObject(5).put("value", "off");
-            DataBuffer.data.getJSONObject(6).put("value", "on");
+            DataBuffer.data.getJSONObject(4).put("value", "off"); // V102
+            DataBuffer.data.getJSONObject(5).put("value", "off"); // S115
+            DataBuffer.data.getJSONObject(6).put("value", "on"); // S116
             DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
             DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
             DataBuffer.data.getJSONObject(8).put("value", String.valueOf(checkUltrasonicSensorState(9)));
@@ -217,11 +217,15 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(21).put("change_rate", String.valueOf(changeRateAirPressure));
             DataBuffer.data.getJSONObject(22).put("value", "on");
             DataBuffer.data.getJSONObject(23).put("value", "on");
-            DataBuffer.data.getJSONObject(24).put("value", "on");
+            DataBuffer.data.getJSONObject(24).put("value", "on"); // Ventil 112
             DataBuffer.data.getJSONObject(25).put("value", "OK");
             DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
-            DataBuffer.data.getJSONObject(27).put("value", "off");
+            DataBuffer.data.getJSONObject(27).put("value", "off"); // Ventil 113
+            DataBuffer.data.getJSONObject(28).put("value", "on"); // Rohr 101 ober
+            DataBuffer.data.getJSONObject(29).put("value", "on"); // Rohr 102 ersatz
+            DataBuffer.data.getJSONObject(30).put("value", "on"); // Rohr 103 unter
+            DataBuffer.data.getJSONObject(31).put("value", "on"); // MC 02
             setFaultValue();
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
@@ -293,7 +297,11 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(25).put("value", "OK");
             DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
-            DataBuffer.data.getJSONObject(27).put("value", "off");
+            DataBuffer.data.getJSONObject(27).put("value", "off"); // Ventil 113
+            DataBuffer.data.getJSONObject(28).put("value", "on"); // Rohr 101 ober
+            DataBuffer.data.getJSONObject(29).put("value", "on"); // Rohr 102 ersatz
+            DataBuffer.data.getJSONObject(30).put("value", "on"); // Rohr 103 unter
+            DataBuffer.data.getJSONObject(31).put("value", "off"); // MC 02
             setFaultValue();
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
@@ -328,9 +336,9 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(2).put("value", String.valueOf(gui.getTemperature()));
             DataBuffer.data.getJSONObject(2).put("change_rate", String.valueOf(changeRateTemperature));
             DataBuffer.data.getJSONObject(3).put("value", "OK");
-            DataBuffer.data.getJSONObject(4).put("value", "on");
-            DataBuffer.data.getJSONObject(5).put("value", "off");
-            DataBuffer.data.getJSONObject(6).put("value", "on");
+            DataBuffer.data.getJSONObject(4).put("value", "off"); // V102
+            DataBuffer.data.getJSONObject(5).put("value", "off"); // S115
+            DataBuffer.data.getJSONObject(6).put("value", "on"); // S116
             DataBuffer.data.getJSONObject(7).put("value", String.valueOf(gui.getWaterLevel()));
             DataBuffer.data.getJSONObject(7).put("change_rate", String.valueOf(changeRateWaterLevel));
             DataBuffer.data.getJSONObject(8).put("value", String.valueOf(checkUltrasonicSensorState(9)));
@@ -358,11 +366,15 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(21).put("change_rate", String.valueOf(changeRateAirPressure));
             DataBuffer.data.getJSONObject(22).put("value", "on");
             DataBuffer.data.getJSONObject(23).put("value", "on");
-            DataBuffer.data.getJSONObject(24).put("value", "on");
+            DataBuffer.data.getJSONObject(24).put("value", "off");
             DataBuffer.data.getJSONObject(25).put("value", "OK");
             DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
-            DataBuffer.data.getJSONObject(27).put("value", "on");
+            DataBuffer.data.getJSONObject(27).put("value", "on"); // Ventil 113
+            DataBuffer.data.getJSONObject(28).put("value", "on"); // Rohr 101 ober
+            DataBuffer.data.getJSONObject(29).put("value", "on"); // Rohr 102 ersatz
+            DataBuffer.data.getJSONObject(30).put("value", "on"); // Rohr 103 unter
+            DataBuffer.data.getJSONObject(31).put("value", "off"); // MC 02
             setFaultValue();
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
@@ -429,6 +441,10 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
         DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
         DataBuffer.data.getJSONObject(27).put("value", "off");
+        DataBuffer.data.getJSONObject(28).put("value", "on"); // Rohr 101 ober
+        DataBuffer.data.getJSONObject(29).put("value", "on"); // Rohr 102 ersatz
+        DataBuffer.data.getJSONObject(30).put("value", "on"); // Rohr 103 unter
+        DataBuffer.data.getJSONObject(31).put("value", "off"); // MC 02
         setFaultValue();
         JSONObject sendData = new JSONObject();
         sendData.put("components", DataBuffer.data);
@@ -496,6 +512,10 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
             DataBuffer.data.getJSONObject(27).put("value", "off");
+            DataBuffer.data.getJSONObject(28).put("value", "on"); // Rohr 101 ober
+            DataBuffer.data.getJSONObject(29).put("value", "on"); // Rohr 102 ersatz
+            DataBuffer.data.getJSONObject(30).put("value", "on"); // Rohr 103 unter
+            DataBuffer.data.getJSONObject(31).put("value", "off"); // MC 02
             setFaultValue();
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
@@ -560,6 +580,10 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
         DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
         DataBuffer.data.getJSONObject(27).put("value", "off");
+        DataBuffer.data.getJSONObject(28).put("value", "on"); // Rohr 101 ober
+        DataBuffer.data.getJSONObject(29).put("value", "on"); // Rohr 102 ersatz
+        DataBuffer.data.getJSONObject(30).put("value", "on"); // Rohr 103 unter
+        DataBuffer.data.getJSONObject(31).put("value", "off"); // MC 02
         setFaultValue();
         starttime = System.currentTimeMillis();
         simulatorCenterController.getWatchListGUI().refresh();
@@ -638,6 +662,10 @@ public class FunctionController {
             DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
             DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
             DataBuffer.data.getJSONObject(27).put("value", "off");
+            DataBuffer.data.getJSONObject(28).put("value", "on"); // Rohr 101 ober
+            DataBuffer.data.getJSONObject(29).put("value", "on"); // Rohr 102 ersatz
+            DataBuffer.data.getJSONObject(30).put("value", "on"); // Rohr 103 unter
+            DataBuffer.data.getJSONObject(31).put("value", "off"); // MC 02
             setFaultValue();
             starttime = System.currentTimeMillis();
             simulatorCenterController.getWatchListGUI().refresh();
@@ -704,6 +732,10 @@ public class FunctionController {
         DataBuffer.data.getJSONObject(26).put("value", String.valueOf(gui.getTemperature()));
         DataBuffer.data.getJSONObject(26).put("change_rate", String.valueOf(changeRateTemperature));
         DataBuffer.data.getJSONObject(27).put("value", "off");
+        DataBuffer.data.getJSONObject(28).put("value", "on"); // Rohr 101 ober
+        DataBuffer.data.getJSONObject(29).put("value", "on"); // Rohr 102 ersatz
+        DataBuffer.data.getJSONObject(30).put("value", "on"); // Rohr 103 unter
+        DataBuffer.data.getJSONObject(31).put("value", "off"); // MC 02
         setFaultValue();
         starttime = System.currentTimeMillis();
         simulatorCenterController.getWatchListGUI().refresh();
@@ -834,6 +866,18 @@ public class FunctionController {
                     break;
                 case 26:
                     break;
+                case 27:
+                    break;
+                case 28:
+                    break;
+                case 29:
+                    break;
+                case 30:
+                    break;
+                case 31:
+                    break;
+                case 32:
+                    break;
                 default:
                     break;
             }
@@ -933,6 +977,25 @@ public class FunctionController {
                     break;
                 case 26:
                     DataBuffer.data.getJSONObject(25).put("value", "Defect");
+                    break;
+                case 27:
+                    DataBuffer.data.getJSONObject(26).put("value", fault.getString("shift_value"));
+                    DataBuffer.data.getJSONObject(26).put("change_rate", "0.0");
+                    break;
+                case 28:
+                    DataBuffer.data.getJSONObject(27).put("value", "off");
+                    break;
+                case 29:
+                    DataBuffer.data.getJSONObject(28).put("value", "Defect");
+                    break;
+                case 30:
+                    DataBuffer.data.getJSONObject(29).put("value", "Defect");
+                    break;
+                case 31:
+                    DataBuffer.data.getJSONObject(30).put("value", "Defect");
+                    break;
+                case 32:
+                    DataBuffer.data.getJSONObject(30).put("value", "off");
                     break;
                 default:
                     break;

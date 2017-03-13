@@ -71,7 +71,11 @@ public class WatchListGUI {
                                 + (new BigDecimal(Double.valueOf(obj.getString("change_rate")))
                                 .setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue()) + ")");
             } else {
-                valueLabels.get(i).setText(obj.getString("value"));
+                if (obj.isNull("value")) {
+                    valueLabels.get(i).setText("-");
+                } else {
+                    valueLabels.get(i).setText(obj.getString("value"));
+                }
             }
         }
     }
