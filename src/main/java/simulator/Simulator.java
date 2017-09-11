@@ -22,7 +22,8 @@ public class Simulator extends JFrame {
     private FDMGUI FDMGui;
 
     public void init() {
-        setTitle("Remote Fault Handling and Reconfiguration System Simulator");
+      //  setTitle("Remote Fault Handling and Reconfiguration System Simulator");
+        setTitle("Two-Tank System Simulator");
         setBounds(0, 0, 1402, 800);
         setSize(1402, 800);
         setResizable(false);
@@ -73,6 +74,7 @@ public class Simulator extends JFrame {
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel( javax.swing.UIManager.getSystemLookAndFeelClassName());
+
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
         }

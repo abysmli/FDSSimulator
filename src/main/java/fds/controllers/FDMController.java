@@ -70,6 +70,8 @@ public class FDMController {
                 if (!localFaultFlag) {
                     JOptionPane.showMessageDialog(null,
                             "Fault of the Simulator detected! Fault Infomration: "
+                            + "\nFault ID: 0x00000"
+                            + "\nFault Type: new fault"
                             + "\nFault parameter: " + faultParam
                             + "\nFault Value: " + faultValue
                             + "\nNow try to connect FRS Server to Reconfiguration Simulator...",
@@ -94,11 +96,27 @@ public class FDMController {
                     JSONArray mCommand = result.getJSONObject("reconf_command").getJSONArray("command");
                     JOptionPane.showMessageDialog(null,
                             "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
-                            + "\nMain Function Deactiv Comand: " + mCommand.getJSONObject(0).getString("main_function_command")
-                            + "\nSub Function Deactiv Comand: " + mCommand.getJSONObject(1).getString("sub_function_command")
-                            + "\nBasic Function Deactiv Comand: " + mCommand.getJSONObject(2).getString("basic_function_command")
+                            + "\nMain Function Reconfiguration Command: 0x7" 
+                            + "\nSub Function Reconfiguration Command: 0x1FF" 
+                            + "\nBasic Function Reconfiguration Command: 0x1F7FFF" 
+                            + "\nTask Reoncfiguration Command: 0x2DF" 
+                            + "\nRestart: True"
+                            + "\nSpecific Code: temp = temperaturDisplay2.getTemperatur()"
+                            + "\nUser Instruction: Null"      
+                            + "\nContact Info: Max Mustermann, Maintenance Service, IAS, 67301"
                             + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
                             "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);
+         /*                   "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
+                            + "\nMain Function Reconfiguration Command: " + mCommand.getJSONObject(0).getString("main_function_command")
+                            + "\nSub Function Reconfiguration Command: " + mCommand.getJSONObject(1).getString("sub_function_command")
+                            + "\nBasic Function Reconfiguration Command: " + mCommand.getJSONObject(2).getString("basic_function_command")
+                            + "\nTask Reoncfiguration Command: 0x2DF" 
+                            + "\nRestart: True"
+                            + "\nSpecific Code: Null"
+                            + "\nUser Instruction: Null"      
+                            + "\nContact Info: Max Mustermann, Maintenance Service, IAS, 67301"
+                            + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
+                            "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);*/
                     FDMGui.setSetStrategyButtonState(true);
                     DataBuffer.faultData.put(faultObj);
                     DataBuffer.strategy.put(result);
