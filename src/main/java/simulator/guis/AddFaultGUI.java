@@ -39,7 +39,7 @@ public class AddFaultGUI {
 
     public AddFaultGUI(SimulatorCenterController simulatorCenterController) {
         this.simulatorCenterController = simulatorCenterController;
-        AddFaultGUI.setBounds(0, 0, 920, 600);
+        AddFaultGUI.setBounds(0, 0, 920, 650);
         AddFaultGUI.setResizable(false);
         AddFaultGUI.setLayout(null);
         JLabel ComponentsTitle = new JLabel("Select Component");

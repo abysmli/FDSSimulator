@@ -66,11 +66,11 @@ public class TasksList extends JPanel {
         model.clearSelection();
 
         JScrollPane taskscroll = new JScrollPane(tasktable);
-        taskscroll.setBounds(2, 0, 299, 690);
+        taskscroll.setBounds(2, 0, 299, 640);
         taskpanel.add(taskscroll);
 
         JButton clearbutton = new JButton("Remove Tasks");
-        clearbutton.setBounds(16, 750, 168, 25);
+        clearbutton.setBounds(16, 700, 168, 25);
         clearbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -79,7 +79,7 @@ public class TasksList extends JPanel {
         });
         tasklabel = new JLabel("List of Tasks");
         tasklabel.setFont(new Font("Ubuntu", 0, 20));
-        tasklabel.setBounds(50, 10, 150, 20);
+        tasklabel.setBounds(20, 10, 150, 20);
         tasktable.getColumnModel().getColumn(0).setPreferredWidth(30);
         tasktable.getColumnModel().getColumn(1).setPreferredWidth(30);
         tasktable.getColumnModel().getColumn(2).setPreferredWidth(180);

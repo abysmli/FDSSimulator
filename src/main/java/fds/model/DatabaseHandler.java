@@ -31,6 +31,7 @@ public class DatabaseHandler {
         DataSource.setPort(3306);
         DataSource.setUser("FDS");
         DataSource.setPassword("FDS");
+        DataSource.setURL("jdbc:mysql://localhost/FRS_Simulator?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
     }
 
     public void initConnections() throws NamingException, SQLException {

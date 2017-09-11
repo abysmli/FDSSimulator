@@ -27,7 +27,6 @@ public class Simulator extends JFrame {
         setSize(1402, 800);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setLayout(null);
         this.Application = this;
 //        addWindowListener(new WindowAdapter() {
@@ -57,6 +56,8 @@ public class Simulator extends JFrame {
         JFrame frame = new JFrame("Fault Diagnose GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
+        ImageIcon icon = new ImageIcon(System.getProperty("user.dir") + "/src/main/resource/imgs/icon-fds.png");
+        frame.setIconImage(icon.getImage());
         FDMGui = new FDMGUI();
         FDMGui.init();
         frame.setContentPane(FDMGui.getContentPane());
@@ -71,12 +72,13 @@ public class Simulator extends JFrame {
      */
     public static void main(String[] args) {
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.setLookAndFeel( javax.swing.UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
         }
         Simulator simulator = new Simulator();
+        ImageIcon icon = new ImageIcon(System.getProperty("user.dir") + "/src/main/resource/imgs/icon-simulator.png");
+        simulator.setIconImage(icon.getImage());
         simulator.init();
         simulator.startFDMGUI();
         simulator.start();

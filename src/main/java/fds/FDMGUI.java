@@ -8,10 +8,14 @@ package fds;
 import simulator.utils.DataBuffer;
 import fds.controllers.guis.ChartViewContorller;
 import fds.controllers.FDMController;
+import fds.model.DatabaseHandler;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
@@ -26,6 +30,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javax.naming.NamingException;
 import javax.swing.JApplet;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,6 +59,7 @@ public class FDMGUI extends JApplet {
 
     Label process;
     private FDMController FDMController;
+    private DatabaseHandler databaseHandler;
     Button ExecuteButton;
 
     @Override
@@ -63,11 +69,17 @@ public class FDMGUI extends JApplet {
         add(fxContainer, BorderLayout.CENTER);
         // create JavaFX scene
         Platform.runLater(() -> {
-            createScene();
+            try {
+                createScene();
+            } catch (SQLException ex) {
+                Logger.getLogger(FDMGUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NamingException ex) {
+                Logger.getLogger(FDMGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
     }
 
-    private void createScene() {
+    private void createScene() throws SQLException, NamingException {
         StackPane root = new StackPane();
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(systeminfo_panel);
@@ -82,7 +94,11 @@ public class FDMGUI extends JApplet {
         AnchorPane.setLeftAnchor(grid, 0.0);
         AnchorPane.setBottomAnchor(grid, 0.0);
         systeminfo_panel.getChildren().add(grid);
-
+        
+        this.databaseHandler = new DatabaseHandler();
+        if (DataBuffer.initData.length() == 0) {
+            DataBuffer.initData = databaseHandler.getComponents();
+        }
         generateInfos(DataBuffer.initData);
         generateCharts(DataBuffer.initData);
 

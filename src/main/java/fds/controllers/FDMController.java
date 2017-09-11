@@ -89,11 +89,9 @@ public class FDMController {
                     faultObj.put("fault_type", faultType);
                     faultObj.put("task_list", TaskList);
                     simulatorCenterController.getWatchListGUI().setDefektComponent(componentID, true);
-
+                    System.out.print(faultObj.toString());
                     JSONObject result = sendFault(faultObj);
                     JSONArray mCommand = result.getJSONObject("reconf_command").getJSONArray("command");
-
-                    System.out.println(mCommand.toString());
                     JOptionPane.showMessageDialog(null,
                             "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
                             + "\nMain Function Deactiv Comand: " + mCommand.getJSONObject(0).getString("main_function_command")

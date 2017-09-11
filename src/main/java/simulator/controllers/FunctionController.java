@@ -22,7 +22,7 @@ import org.json.JSONObject;
  */
 public class FunctionController {
 
-    protected int delay = 20;
+    protected int delay = 50;
     protected double flowrateValve = 0.5;
     protected double sollWaterLevel = 8;
     protected double initWaterLevel = 1;
