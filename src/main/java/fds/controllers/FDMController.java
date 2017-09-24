@@ -10,6 +10,8 @@ import simulator.utils.DataBuffer;
 import simulator.utils.FDSHttpRequestHandler;
 import fds.FDMGUI;
 import fds.model.DatabaseHandler;
+import java.util.Arrays;
+import java.util.List;
 import javafx.application.Platform;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -50,9 +52,10 @@ public class FDMController {
                 simulatorCenterController.Stop();
                 JSONArray faultDatabase = databaseHandler.getFaultKnowledge();
                 Boolean localFaultFlag = false;
+                String mFaultLocation = this.findID(selectedseries);
                 for (int i = 0; i < faultDatabase.length(); i++) {
                     JSONObject faultObject = faultDatabase.getJSONObject(i);
-                    if (faultObject.getString("fault_location").equals(String.valueOf(this.findComponentBySeries(selectedseries).getInt("component_id")))) {
+                    if (faultObject.getString("fault_location").equals(mFaultLocation)) {
                         localFaultFlag = true;
                         JSONArray mCommand = (new JSONObject(faultObject.getString("reconf_command"))).getJSONArray("command");
                         JOptionPane.showMessageDialog(null,
@@ -77,36 +80,37 @@ public class FDMController {
                             + "\nNow try to connect FRS Server to Reconfiguration Simulator...",
                             "Connecting to FRS Server...", JOptionPane.ERROR_MESSAGE);
 
-                    JSONObject componentObj = this.findComponentBySeries(selectedseries);
-                    int componentID = componentObj.getInt("component_id");
-
                     JSONObject faultObj = new JSONObject();
                     faultObj.put("fault_name", faultName);
                     faultObj.put("fault_effect", faultEffect);
-                    faultObj.put("fault_location", String.valueOf(componentID));
+                    faultObj.put("fault_location", mFaultLocation);
                     faultObj.put("fault_value", faultValue);
                     faultObj.put("fault_parameter", faultParam);
                     faultObj.put("fault_message", faultMessage);
                     faultObj.put("equipment_id", EquipmentID);
                     faultObj.put("fault_type", faultType);
                     faultObj.put("task_list", TaskList);
-                    simulatorCenterController.getWatchListGUI().setDefektComponent(componentID, true);
-                    System.out.print(faultObj.toString());
+//                    simulatorCenterController.getWatchListGUI().setDefektComponent(componentID, true);
+                    System.out.println("Sended Fault Object: ");
+                    System.out.println(faultObj.toString());
                     JSONObject result = sendFault(faultObj);
                     JSONArray mCommand = result.getJSONObject("reconf_command").getJSONArray("command");
+                    JSONObject reconfObjg = result.getJSONObject("reconf_command");
+                    System.out.println("Response from DHFRS: ");
+                    System.out.println(result.toString());
                     JOptionPane.showMessageDialog(null,
                             "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
-                            + "\nMain Function Reconfiguration Command: 0x7" 
-                            + "\nSub Function Reconfiguration Command: 0x1FF" 
-                            + "\nBasic Function Reconfiguration Command: 0x1F7FFF" 
-                            + "\nTask Reoncfiguration Command: 0x2DF" 
-                            + "\nRestart: True"
-                            + "\nSpecific Code: temp = temperaturDisplay2.getTemperatur()"
-                            + "\nUser Instruction: Null"      
-                            + "\nContact Info: Max Mustermann, Maintenance Service, IAS, 67301"
+                            + "\nMain Function Reconfiguration Command: 0x" + mCommand.getJSONObject(0).getString("main_function_command")
+                            + "\nSub Function Reconfiguration Command: 0x" + mCommand.getJSONObject(1).getString("sub_function_command")
+                            + "\nBasic Function Reconfiguration Command: 0x" + mCommand.getJSONObject(2).getString("basic_function_command")
+                            + "\nTask Reoncfiguration Command: 0x" + mCommand.getJSONObject(0).getString("main_function_command") + mCommand.getJSONObject(1).getString("sub_function_command") + mCommand.getJSONObject(2).getString("basic_function_command")
+                            + "\nRestart: " + reconfObjg.getString("special_code")
+                            + "\nSpecific Code: " + reconfObjg.getString("special_code")
+                            + "\nUser Instruction: Null"
+                            + "\nContact Info: " + reconfObjg.getJSONObject("personal_data").getString("General_Techniker")
                             + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
                             "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);
-         /*                   "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
+                    /*                   "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
                             + "\nMain Function Reconfiguration Command: " + mCommand.getJSONObject(0).getString("main_function_command")
                             + "\nSub Function Reconfiguration Command: " + mCommand.getJSONObject(1).getString("sub_function_command")
                             + "\nBasic Function Reconfiguration Command: " + mCommand.getJSONObject(2).getString("basic_function_command")
@@ -142,14 +146,30 @@ public class FDMController {
         });
     }
 
-    public JSONObject findComponentBySeries(String selectedseries) {
-        JSONObject component = new JSONObject();
-        for (int i = 0; i < DataBuffer.data.length(); i++) {
-            if (DataBuffer.data.getJSONObject(i).getString("series").equals(selectedseries)) {
-                component = DataBuffer.data.getJSONObject(i);
+    public String findID(String selectedseries) {
+        String[] ids = selectedseries.split(", ");
+        List<String> idList = Arrays.asList(ids);
+        String idString = "";
+        for (int i = 0; i < idList.size(); i++) {
+            String id = idList.get(i);
+            if ((id.length() < 9 ? id : id.substring(0, 9)).equals("Subsystem")) {
+                id = "S" + id.substring(10);
+            } else {
+                for (int j = 0; j < DataBuffer.data.length(); j++) {
+                    if (DataBuffer.data.getJSONObject(j).getString("series").equals(id)) {
+                        id = "C" + String.valueOf(DataBuffer.data.getJSONObject(i).getInt("component_id"));
+                    }
+                }
             }
+            if (i == 0) {
+                idString = id;
+            } else {
+                idString += "," + id;
+            }
+            idList.set(i, id);
         }
-        return component;
+
+        return idString;
     }
 
 }

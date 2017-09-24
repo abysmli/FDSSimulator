@@ -235,11 +235,11 @@ public class MenuGui extends JPanel {
         this.HeatingButton.addActionListener((ActionEvent e) -> {
             simulatorCenterController.HeatingProcess();
         });
-        checkConnection();
+//        checkConnection();
     }
 
-    private void checkConnection() throws Exception {
-        if (simulatorCenterController.checkConnection()) {
+    public void checkConnection(boolean state) {
+        if (state) {
             setConnectionStatus("connected");
         } else {
             setConnectionStatus("disconnected");

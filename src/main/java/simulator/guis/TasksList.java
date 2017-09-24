@@ -9,17 +9,23 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetAddress;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import simulator.controllers.SimulatorCenterController;
+import simulator.utils.ErrorLogger;
+import simulator.utils.SimulatorSetting;
 
 /**
  *
@@ -29,9 +35,13 @@ public class TasksList extends JPanel {
 
     private final SimulatorCenterController simulatorCenterController;
     private DefaultTableModel avtastlist;
-    private JTable tasktable;
+    private JTable taskTable;
     private ListSelectionModel model;
-    private JLabel tasklabel;
+    private JLabel taskLabel;
+    private JLabel equipmentLabel;
+    private JLabel addressLabel;
+    private JLabel remoteLabel;
+    private JTextField remoteTextField;
 
     /**
      * Create the panel.
@@ -49,44 +59,75 @@ public class TasksList extends JPanel {
         setLayout(null);
 
         JPanel taskpanel = new JPanel();
-        taskpanel.setBounds(0, 50, 300, 690);
+        taskpanel.setBounds(0, 50, 300, 490);
         taskpanel.setLayout(null);
         String[] taskcolumn = {"Nr.", "ID", "Task Name", "Status"};
         avtastlist = new DefaultTableModel();
-        tasktable = new JTable();
-        tasktable.setRowSelectionAllowed(true);
-        tasktable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tasktable.setRowHeight(20);
+        taskTable = new JTable();
+        taskTable.setRowSelectionAllowed(true);
+        taskTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        taskTable.setRowHeight(20);
         avtastlist.setColumnIdentifiers(taskcolumn);
 
-        tasktable.setModel(avtastlist);
-        tasktable.setEnabled(false);
+        taskTable.setModel(avtastlist);
+        taskTable.setEnabled(false);
 
-        model = tasktable.getSelectionModel();
+        model = taskTable.getSelectionModel();
         model.clearSelection();
 
-        JScrollPane taskscroll = new JScrollPane(tasktable);
-        taskscroll.setBounds(2, 0, 299, 640);
+        JScrollPane taskscroll = new JScrollPane(taskTable);
+        taskscroll.setBounds(3, 0, 298, 490);
         taskpanel.add(taskscroll);
 
         JButton clearbutton = new JButton("Remove Tasks");
-        clearbutton.setBounds(16, 700, 168, 25);
+        clearbutton.setBounds(20, 550, 168, 25);
         clearbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 delTasks();
             }
         });
-        tasklabel = new JLabel("List of Tasks");
-        tasklabel.setFont(new Font("Ubuntu", 0, 20));
-        tasklabel.setBounds(20, 10, 150, 20);
-        tasktable.getColumnModel().getColumn(0).setPreferredWidth(30);
-        tasktable.getColumnModel().getColumn(1).setPreferredWidth(30);
-        tasktable.getColumnModel().getColumn(2).setPreferredWidth(180);
-        tasktable.getColumnModel().getColumn(3).setPreferredWidth(80);
-        add(tasklabel);
+        taskLabel = new JLabel("List of Tasks");
+        taskLabel.setFont(new Font("Ubuntu", 0, 20));
+        taskLabel.setBounds(20, 10, 150, 20);
+        taskTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+        taskTable.getColumnModel().getColumn(1).setPreferredWidth(30);
+        taskTable.getColumnModel().getColumn(2).setPreferredWidth(180);
+        taskTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+
+        equipmentLabel = new JLabel("Equipment ID: " + SimulatorSetting.EquipmentID);
+        equipmentLabel.setFont(new Font("Ubuntu", 0, 14));
+        equipmentLabel.setBounds(20, 600, 290, 20);
+
+        addressLabel = new JLabel("Local IP Address: " + InetAddress.getLocalHost().getHostAddress());
+        addressLabel.setFont(new Font("Ubuntu", 0, 14));
+        addressLabel.setBounds(20, 630, 290, 20);
+
+        remoteLabel = new JLabel("Server IP Address: ");
+        remoteLabel.setFont(new Font("Ubuntu", 0, 14));
+        remoteLabel.setBounds(20, 660, 290, 20);
+
+        remoteTextField = new JTextField(SimulatorSetting.FDSAddress);
+        remoteTextField.setBounds(20, 690, 260, 27);
+
+        JButton connectButton = new JButton("Connect Server");
+        connectButton.setBounds(20, 730, 168, 25);
+        connectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SimulatorSetting.FDSAddress = remoteTextField.getText();
+                simulatorCenterController.checkConnection();
+            }
+        });
+
+        add(taskLabel);
         add(clearbutton);
         add(taskpanel);
+        add(equipmentLabel);
+        add(addressLabel);
+        add(remoteLabel);
+        add(remoteTextField);
+        add(connectButton);
     }
 
     public void addTasks(JSONObject taskObj) {
@@ -111,7 +152,7 @@ public class TasksList extends JPanel {
     public JSONArray getList() {
         JSONArray mTaskList = new JSONArray();
         for (int i = 0; i < avtastlist.getRowCount(); i++) {
-            JSONObject taskObj=new JSONObject();
+            JSONObject taskObj = new JSONObject();
             taskObj.put("task_nr", avtastlist.getValueAt(i, 0));
             taskObj.put("task_id", avtastlist.getValueAt(i, 1));
             taskObj.put("task_name", avtastlist.getValueAt(i, 2));

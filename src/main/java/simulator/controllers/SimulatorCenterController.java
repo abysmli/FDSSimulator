@@ -18,6 +18,10 @@ import simulator.utils.SimulatorSetting;
 import fds.FDMGUI;
 import fds.controllers.FDMController;
 import fds.model.DatabaseHandler;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.NamingException;
 import simulator.guis.TasksList;
 
 public class SimulatorCenterController {
@@ -29,13 +33,14 @@ public class SimulatorCenterController {
     public final TasksList tasksList;
     private final WatchListGUI watchListGUI;
     private final AddFaultGUI addFaultGUI;
-    private final FDSHttpRequestHandler http;
+    private FDSHttpRequestHandler http;
     private final TaskController taskController;
     private final FDMController FDMController;
     private final DatabaseHandler databaseHandler;
 
     public SimulatorCenterController(Simulator application, FDMGUI FDMGui) throws Exception {
         this.databaseHandler = new DatabaseHandler();
+        DataBuffer.SubSystems = databaseHandler.getSubsystems();
         DataBuffer.initData = databaseHandler.getComponents();
         DataBuffer.data = databaseHandler.getComponents();
         DataBuffer.task = databaseHandler.getTasks();
@@ -126,7 +131,7 @@ public class SimulatorCenterController {
         }
     }
 
-    public void Reset() {
+    public void Reset() throws SQLException, NamingException {
         taskController.reset();
         buttonStatusChange(false);
         watchListGUI.resetDefektComponent();
@@ -138,6 +143,7 @@ public class SimulatorCenterController {
         sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
         sendData.put("task_id", new Integer(0));
         sendData.put("function_id", new Integer(0));
+        databaseHandler.resetDatabase();
         try {
             http.postRuntimeData(sendData);
         } catch (Exception e) {
@@ -162,7 +168,7 @@ public class SimulatorCenterController {
                         JOptionPane.showMessageDialog(null,
                                 "Reconfiguration Strategy: Deactive Mainfunction "
                                 + result.getJSONObject("execute_command").getJSONArray("mainfunction_ids")
-                                .toString()
+                                        .toString()
                                 + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
                                 "Response from FRS(Server)", JOptionPane.WARNING_MESSAGE);
                         DataBuffer.faultData.put(faultObj);
@@ -276,8 +282,21 @@ public class SimulatorCenterController {
         addFaultGUI.setVisible(series);
     }
 
-    public boolean checkConnection() throws Exception {
-        return http.connectionStatus().getString("status").equals("running");
+    public void checkConnection() {
+        http = new FDSHttpRequestHandler(SimulatorSetting.FDSAddress);
+        menugui.checkConnection(false);
+        try {
+            boolean state = http.connectionStatus().getString("status").equals("running");
+            menugui.checkConnection(state);
+            JOptionPane.showMessageDialog(null,
+                    "Connected to DHFRS Server successfully",
+                    "Connecting to DHFRS Server", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,
+                    "Connect to DHFRS Server failed",
+                    "Connecting to DHFRS Server", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(SimulatorCenterController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void buttonStatusChange(boolean flag) {

@@ -137,6 +137,23 @@ public class DatabaseHandler {
         return jsonarray;
     }
     
+    public JSONArray getSubsystems() throws SQLException, NamingException {
+        this.initConnections();
+        ResultSet result = stmt.executeQuery("SELECT * FROM sub_system_table");
+        JSONArray jsonarray = new JSONArray();
+        while (result.next()) {
+            JSONObject obj = new JSONObject();
+            obj.put("subsystem_id", result.getInt(1));
+            obj.put("subsystem_desc", result.getString(2));
+            obj.put("status", result.getString(3));
+            obj.put("insert_date", result.getTimestamp(4));
+            jsonarray.put(obj);
+        }
+        result.close();
+        this.releaseConnections();
+        return jsonarray;
+    }
+    
     public void updateRuntimeData(JSONObject mResult) throws SQLException, NamingException {
         this.initConnections();
         stmt.executeUpdate(
@@ -156,4 +173,5 @@ public class DatabaseHandler {
         obj.put("result", "success");
         return obj;
     }
+
 }

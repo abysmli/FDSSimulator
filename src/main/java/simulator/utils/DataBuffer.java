@@ -8,6 +8,7 @@ import org.json.JSONArray;
 public class DataBuffer {
     public static JSONArray data = new JSONArray();
     public static JSONArray initData = new JSONArray();
+    public static JSONArray SubSystems = new JSONArray();
     public static JSONArray faultData = new JSONArray();
     public static JSONArray localFaultData = new JSONArray();
     public static JSONArray strategy = new JSONArray();
