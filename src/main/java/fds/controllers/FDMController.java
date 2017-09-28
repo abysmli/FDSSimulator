@@ -58,12 +58,18 @@ public class FDMController {
                     if (faultObject.getString("fault_location").equals(mFaultLocation)) {
                         localFaultFlag = true;
                         JSONArray mCommand = (new JSONObject(faultObject.getString("reconf_command"))).getJSONArray("command");
+                        JSONObject reconfObjg = new JSONObject(faultObject.getString("reconf_command"));
                         JOptionPane.showMessageDialog(null,
                                 "Knownfault found!\nReconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
-                                + "\nFault ID: " + faultObject.getInt("fault_id")
-                                + "\nMain Function Deactiv Comand: " + mCommand.getJSONObject(0).getString("main_function_command")
-                                + "\nSub Function Deactiv Comand: " + mCommand.getJSONObject(1).getString("sub_function_command")
-                                + "\nBasic Function Deactiv Comand: " + mCommand.getJSONObject(2).getString("basic_function_command"), "Response from Local Fault Diagnose Modul", JOptionPane.INFORMATION_MESSAGE);
+                                + "\nMain Function Reconfiguration Command: 0x" + mCommand.getJSONObject(0).getString("main_function_command")
+                                + "\nSub Function Reconfiguration Command: 0x" + mCommand.getJSONObject(1).getString("sub_function_command")
+                                + "\nBasic Function Reconfiguration Command: 0x" + mCommand.getJSONObject(2).getString("basic_function_command")
+                                + "\nTask Reoncfiguration Command: 0x" + mCommand.getJSONObject(0).getString("main_function_command") + mCommand.getJSONObject(1).getString("sub_function_command") + mCommand.getJSONObject(2).getString("basic_function_command")
+                                + "\nRestart: " + reconfObjg.getString("special_code")
+                                + "\nSpecific Code: " + reconfObjg.getString("special_code")
+                                + "\nUser Instruction: Null"
+                                + "\nContact Info: " + reconfObjg.getJSONObject("personal_data").getString("General_Techniker")
+                                + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!", "Response from Local Fault Diagnose Modul", JOptionPane.INFORMATION_MESSAGE);
                         FDMGui.setSetStrategyButtonState(true);
                         DataBuffer.faultData.put(faultObject);
                         DataBuffer.strategy.put(faultObject);
@@ -110,18 +116,7 @@ public class FDMController {
                             + "\nContact Info: " + reconfObjg.getJSONObject("personal_data").getString("General_Techniker")
                             + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
                             "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);
-                    /*                   "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
-                            + "\nMain Function Reconfiguration Command: " + mCommand.getJSONObject(0).getString("main_function_command")
-                            + "\nSub Function Reconfiguration Command: " + mCommand.getJSONObject(1).getString("sub_function_command")
-                            + "\nBasic Function Reconfiguration Command: " + mCommand.getJSONObject(2).getString("basic_function_command")
-                            + "\nTask Reoncfiguration Command: 0x2DF" 
-                            + "\nRestart: True"
-                            + "\nSpecific Code: Null"
-                            + "\nUser Instruction: Null"      
-                            + "\nContact Info: Max Mustermann, Maintenance Service, IAS, 67301"
-                            + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!",
-                            "Response from FRS(Server)", JOptionPane.INFORMATION_MESSAGE);*/
-                    FDMGui.setSetStrategyButtonState(true);
+                    FDMGui.setReconfigurationStrategy(result);
                     DataBuffer.faultData.put(faultObj);
                     DataBuffer.strategy.put(result);
 
@@ -172,4 +167,7 @@ public class FDMController {
         return idString;
     }
 
+    public void setFDSStatus(String status) {
+        FDMGui.setFDSStatus("Status: " + status);
+    }
 }

@@ -131,20 +131,20 @@ public class SimulatorCenterController {
         }
     }
 
-    public void Reset() throws SQLException, NamingException {
-        taskController.reset();
-        buttonStatusChange(false);
-        watchListGUI.resetDefektComponent();
-        DataBuffer.deactivedFunction.clear();
-        DataBuffer.faultData = new JSONArray();
-        DataBuffer.strategy = new JSONArray();
-        JSONObject sendData = new JSONObject();
-        sendData.put("components", DataBuffer.data);
-        sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
-        sendData.put("task_id", new Integer(0));
-        sendData.put("function_id", new Integer(0));
-        databaseHandler.resetDatabase();
+    public void Reset() {
         try {
+            taskController.reset();
+            buttonStatusChange(false);
+            watchListGUI.resetDefektComponent();
+            DataBuffer.deactivedFunction.clear();
+            DataBuffer.faultData = new JSONArray();
+            DataBuffer.strategy = new JSONArray();
+            JSONObject sendData = new JSONObject();
+            sendData.put("components", DataBuffer.data);
+            sendData.put("stamp_time", String.valueOf(System.currentTimeMillis()));
+            sendData.put("task_id", new Integer(0));
+            sendData.put("function_id", new Integer(0));
+            databaseHandler.resetDatabase();
             http.postRuntimeData(sendData);
         } catch (Exception e) {
             ErrorLogger.log(e, "Error Exception", e.getMessage(), ErrorLogger.ERROR_MESSAGE);

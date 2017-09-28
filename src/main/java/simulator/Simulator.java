@@ -59,13 +59,12 @@ public class Simulator extends JFrame {
         frame.setResizable(false);
         ImageIcon icon = new ImageIcon(System.getProperty("user.dir") + "/src/main/resource/imgs/icon-fds.png");
         frame.setIconImage(icon.getImage());
-        FDMGui = new FDMGUI();
+        FDMGui = new FDMGUI(frame);
         FDMGui.init();
         frame.setContentPane(FDMGui.getContentPane());
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        FDMGui.start();
     }
 
     /**
