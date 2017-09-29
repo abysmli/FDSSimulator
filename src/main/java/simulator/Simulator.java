@@ -8,7 +8,7 @@ package simulator;
 import javax.swing.*;
 
 import simulator.controllers.SimulatorCenterController;
-import fds.FDMGUI;
+import fds.FDSGUI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class Simulator extends JFrame {
 
     private Simulator Application;
-    private FDMGUI FDMGui;
+    private FDSGUI FDMGui;
 
     public void init() {
       //  setTitle("Remote Fault Handling and Reconfiguration System Simulator");
@@ -59,7 +59,7 @@ public class Simulator extends JFrame {
         frame.setResizable(false);
         ImageIcon icon = new ImageIcon(System.getProperty("user.dir") + "/src/main/resource/imgs/icon-fds.png");
         frame.setIconImage(icon.getImage());
-        FDMGui = new FDMGUI(frame);
+        FDMGui = new FDSGUI(frame);
         FDMGui.init();
         frame.setContentPane(FDMGui.getContentPane());
         frame.pack();

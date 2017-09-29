@@ -15,8 +15,8 @@ import simulator.utils.DataBuffer;
 import simulator.utils.ErrorLogger;
 import simulator.utils.FDSHttpRequestHandler;
 import simulator.utils.SimulatorSetting;
-import fds.FDMGUI;
-import fds.controllers.FDMController;
+import fds.FDSGUI;
+import fds.controllers.FDSController;
 import fds.model.DatabaseHandler;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -26,7 +26,7 @@ import simulator.guis.TasksList;
 
 public class SimulatorCenterController {
 
-    private final FDMGUI FDMGui;
+    private final FDSGUI FDMGui;
     private final Simulator application;
     private final Gui gui;
     private final MenuGui menugui;
@@ -35,10 +35,10 @@ public class SimulatorCenterController {
     private final AddFaultGUI addFaultGUI;
     private FDSHttpRequestHandler http;
     private final TaskController taskController;
-    private final FDMController FDMController;
+    private final FDSController FDMController;
     private final DatabaseHandler databaseHandler;
 
-    public SimulatorCenterController(Simulator application, FDMGUI FDMGui) throws Exception {
+    public SimulatorCenterController(Simulator application, FDSGUI FDMGui) throws Exception {
         this.databaseHandler = new DatabaseHandler();
         DataBuffer.SubSystems = databaseHandler.getSubsystems();
         DataBuffer.initData = databaseHandler.getComponents();
@@ -64,7 +64,7 @@ public class SimulatorCenterController {
         addFaultGUI = new AddFaultGUI(this);
         watchListGUI = new WatchListGUI();
         taskController = new TaskController(this, gui, menugui);
-        FDMController = new FDMController(this.FDMGui, this.http, this);
+        FDMController = new FDSController(this.FDMGui, this.http, this);
         FDMGui.setFDMController(FDMController);
     }
 
@@ -262,7 +262,7 @@ public class SimulatorCenterController {
         return this.addFaultGUI;
     }
 
-    public FDMController getFDMController() {
+    public FDSController getFDMController() {
         return this.FDMController;
     }
 

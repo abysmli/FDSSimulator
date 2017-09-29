@@ -8,28 +8,30 @@ package fds.controllers;
 import simulator.controllers.SimulatorCenterController;
 import simulator.utils.DataBuffer;
 import simulator.utils.FDSHttpRequestHandler;
-import fds.FDMGUI;
+import fds.FDSGUI;
 import fds.model.DatabaseHandler;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import simulator.utils.ErrorLogger;
 
 /**
  *
  * @author abysmli
  */
-public class FDMController {
+public class FDSController {
 
     private final FDSHttpRequestHandler http;
-    private final FDMGUI FDMGui;
+    private final FDSGUI FDMGui;
     private final SimulatorCenterController simulatorCenterController;
     private final DatabaseHandler databaseHandler;
 
-    public FDMController(FDMGUI FDMGui, FDSHttpRequestHandler http, SimulatorCenterController simulatorCenterController) {
+    public FDSController(FDSGUI FDMGui, FDSHttpRequestHandler http, SimulatorCenterController simulatorCenterController) {
         this.http = http;
         this.FDMGui = FDMGui;
         this.simulatorCenterController = simulatorCenterController;
@@ -70,7 +72,7 @@ public class FDMController {
                                 + "\nUser Instruction: Null"
                                 + "\nContact Info: " + reconfObjg.getJSONObject("personal_data").getString("General_Techniker")
                                 + "\nClick [Set Strategy] Button to apply the reconfiguration strategy!", "Response from Local Fault Diagnose Modul", JOptionPane.INFORMATION_MESSAGE);
-                        FDMGui.setSetStrategyButtonState(true);
+                        FDMGui.setReconfigurationStrategy(faultObject);
                         DataBuffer.faultData.put(faultObject);
                         DataBuffer.strategy.put(faultObject);
                         break;
@@ -104,6 +106,7 @@ public class FDMController {
                     JSONObject reconfObjg = result.getJSONObject("reconf_command");
                     System.out.println("Response from DHFRS: ");
                     System.out.println(result.toString());
+                    FDMGui.showAlert("Response from FRS(Server)", EquipmentID, Alert.AlertType.ERROR);
                     JOptionPane.showMessageDialog(null,
                             "Reconfiguration Strategy: Deactive Functions and Reconfigure Tasklist"
                             + "\nMain Function Reconfiguration Command: 0x" + mCommand.getJSONObject(0).getString("main_function_command")
@@ -124,10 +127,10 @@ public class FDMController {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
             JOptionPane.showMessageDialog(null,
-                    "Response from FRS(Server): Reconfiguration Stratgy Failed!\nThis failure caused by the ATS model still not completely designed!",
+                    "Response from FRS(Server): Processing Failed!\n Internal Error!",
                     "Response from FRS(Server)", JOptionPane.ERROR_MESSAGE);
+            ErrorLogger.log(e, "Error Exception", e.getMessage(), ErrorLogger.ERROR_MESSAGE);
         }
     }
 
